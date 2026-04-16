@@ -21,8 +21,8 @@ export default function HomePage() {
       {featured && (
         <Link to={`/video/${featured.id}`} className="group block -mx-4 -mt-4 mb-4">
           <div className="relative w-full overflow-hidden" style={{ height: "clamp(260px, 42vh, 440px)" }}>
-            {/* Richer layered background */}
-            <div className="absolute inset-0" style={{
+            {/* Background — fades in and slowly scales up */}
+            <div className="absolute inset-0 animate-[heroBgIn_1.2s_ease-out_both] origin-center" style={{
               background: `
                 radial-gradient(ellipse at 20% 25%, ${featured.thumbnailColor}66 0%, transparent 50%),
                 radial-gradient(ellipse at 80% 55%, ${featured.thumbnailColor}40 0%, transparent 45%),
@@ -40,12 +40,12 @@ export default function HomePage() {
             <div className="absolute inset-0" style={{
               background: "radial-gradient(ellipse at center, transparent 20%, hsl(var(--background) / 0.8) 100%)",
             }} />
-            {/* Bottom fade — taller for better text contrast */}
+            {/* Bottom fade */}
             <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-background via-background/80 to-transparent" />
             {/* Top subtle shadow */}
             <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-background/40 to-transparent" />
-            {/* Content */}
-            <div className="absolute inset-0 flex items-end px-8 pb-10">
+            {/* Content — slides up and fades in with staggered delay */}
+            <div className="absolute inset-0 flex items-end px-8 pb-10 animate-[heroContentIn_0.9s_ease-out_0.3s_both]">
               <div className="max-w-xl space-y-2.5">
                 <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-primary/80 font-semibold">
                   <Star className="h-3 w-3 fill-star text-star" />
@@ -70,7 +70,7 @@ export default function HomePage() {
                   ))}
                 </div>
               </div>
-              <div className="hidden sm:flex ml-auto mb-3 items-center justify-center w-14 h-14 rounded-full border border-foreground/10 bg-foreground/5 backdrop-blur-sm group-hover:bg-primary/10 group-hover:border-primary/30 transition-all duration-300">
+              <div className="hidden sm:flex ml-auto mb-3 items-center justify-center w-14 h-14 rounded-full border border-foreground/10 bg-foreground/5 backdrop-blur-sm group-hover:bg-primary/10 group-hover:border-primary/30 transition-all duration-300 animate-[heroContentIn_0.9s_ease-out_0.5s_both]">
                 <Play className="h-6 w-6 text-foreground/40 group-hover:text-primary transition-colors duration-300 ml-0.5" />
               </div>
             </div>
