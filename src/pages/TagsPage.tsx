@@ -1,32 +1,130 @@
+import { useState, useMemo } from "react";
 import { tags } from "@/data/mockData";
-import { Link } from "react-router-dom";
+import CategoryCard from "@/components/CategoryCard";
+import { Search, X } from "lucide-react";
+
+// Featured: top tags by item count
+const FEATURED_IDS = tags
+  .slice()
+  .sort((a, b) => b.videoCount - a.videoCount)
+  .slice(0, 4)
+  .map((t) => t.id);
+
+const allCategories = Array.from(new Set(tags.map((t) => t.category)));
 
 export default function TagsPage() {
-  const grouped = tags.reduce<Record<string, typeof tags>>((acc, tag) => {
-    (acc[tag.category] ||= []).push(tag);
-    return acc;
-  }, {});
+  const [query, setQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+
+  const featured = useMemo(() => tags.filter((t) => FEATURED_IDS.includes(t.id)), []);
+
+  const filtered = useMemo(() => {
+    let result = tags;
+    if (query.trim()) {
+      const q = query.toLowerCase();
+      result = result.filter(
+        (t) => t.name.toLowerCase().includes(q) || t.category.toLowerCase().includes(q)
+      );
+    }
+    if (activeCategory) {
+      result = result.filter((t) => t.category === activeCategory);
+    }
+    return result;
+  }, [query, activeCategory]);
+
+  const showFeatured = !query.trim() && !activeCategory;
 
   return (
-    <div className="animate-fade-in">
-      <h1 className="text-2xl font-bold text-foreground mb-6">Tags</h1>
-      {Object.entries(grouped).map(([category, catTags]) => (
-        <div key={category} className="mb-6">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">{category}</h2>
-          <div className="flex flex-wrap gap-2">
-            {catTags.map((t) => (
-              <Link
-                key={t.id}
-                to={`/tag/${t.id}`}
-                className="px-4 py-2 rounded-lg bg-secondary text-secondary-foreground text-sm font-medium hover:bg-primary/10 hover:text-primary transition-colors"
-              >
-                {t.name}
-                <span className="ml-2 text-xs text-muted-foreground">({t.videoCount})</span>
-              </Link>
+    <div className="animate-fade-in space-y-5">
+      {/* Header */}
+      <div className="space-y-1">
+        <h1 className="text-lg font-bold text-foreground tracking-tight">Categories</h1>
+        <p className="text-xs text-muted-foreground/60">
+          {filtered.length} of {tags.length} categories
+        </p>
+      </div>
+
+      {/* Search + filters */}
+      <div className="flex items-center gap-2">
+        <div className="relative flex-1 max-w-xs">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/50" />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search categories…"
+            className="w-full pl-8 pr-8 py-1.5 rounded-md text-[11px] font-medium bg-secondary/50 border border-border/50 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary/30 focus:ring-1 focus:ring-primary/10 transition-all"
+          />
+          {query && (
+            <button
+              onClick={() => setQuery("")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground/50 hover:text-foreground"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          )}
+        </div>
+
+        {/* Category chips */}
+        <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
+          {allCategories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
+              className={`px-2.5 py-1 rounded-md text-[10px] font-medium whitespace-nowrap transition-all duration-200 border ${
+                activeCategory === cat
+                  ? "bg-primary/15 border-primary/25 text-primary"
+                  : "bg-secondary/30 border-border/30 text-muted-foreground hover:text-foreground hover:border-border/60"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Featured row */}
+      {showFeatured && (
+        <div className="space-y-2">
+          <span className="text-[10px] text-muted-foreground/50 uppercase tracking-wider font-semibold">
+            Featured
+          </span>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
+            {featured.map((t) => (
+              <CategoryCard key={t.id} tag={t} featured />
             ))}
           </div>
         </div>
-      ))}
+      )}
+
+      {/* All categories grid */}
+      <div className="space-y-2">
+        {showFeatured && (
+          <span className="text-[10px] text-muted-foreground/50 uppercase tracking-wider font-semibold">
+            All Categories
+          </span>
+        )}
+        {filtered.length > 0 ? (
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2.5">
+            {filtered.map((t) => (
+              <CategoryCard key={t.id} tag={t} />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <p className="text-sm text-muted-foreground/60">No categories match your search</p>
+            <button
+              onClick={() => {
+                setQuery("");
+                setActiveCategory(null);
+              }}
+              className="mt-2 text-xs text-primary hover:underline"
+            >
+              Clear filters
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
