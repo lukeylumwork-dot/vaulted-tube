@@ -106,6 +106,7 @@ export default function HomePage() {
       </FadeInSection>
 
       <FadeInSection>
+      {/* Performers Row */}
       <section>
         <div className="flex items-center justify-between mb-2.5">
           <div className="flex items-center gap-3">
@@ -122,7 +123,9 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+      </FadeInSection>
 
+      <FadeInSection>
       {/* Collections Grid */}
       <section>
         <div className="flex items-center justify-between mb-2.5">
@@ -187,7 +190,9 @@ export default function HomePage() {
           })}
         </div>
       </section>
+      </FadeInSection>
 
+      <FadeInSection>
       {/* All Items Grid */}
       <section>
         <div className="flex items-center gap-3 mb-2.5">
@@ -200,6 +205,7 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+      </FadeInSection>
     </div>
   );
 }
