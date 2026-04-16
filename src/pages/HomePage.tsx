@@ -13,16 +13,14 @@ export default function HomePage() {
   const favorites = videos.filter((v) => v.isFavorite);
   const topRated = [...videos].sort((a, b) => b.rating - a.rating).slice(0, 12);
 
-  // Pick the top-rated recent item as featured
   const featured = topRated[0];
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Hero / Featured */}
       {featured && (
         <Link to={`/video/${featured.id}`} className="group block -mx-4 -mt-4 mb-2">
           <div className="relative w-full overflow-hidden" style={{ height: "clamp(220px, 36vh, 380px)" }}>
-            {/* Cinematic background */}
             <div className="absolute inset-0" style={{
               background: `
                 radial-gradient(ellipse at 25% 30%, ${featured.thumbnailColor}55 0%, transparent 55%),
@@ -31,25 +29,17 @@ export default function HomePage() {
                 hsl(var(--background))
               `,
             }} />
-
-            {/* Noise */}
             <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay" style={{
               backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
               backgroundSize: "128px 128px",
             }} />
-
-            {/* Vignette */}
             <div className="absolute inset-0" style={{
               background: "radial-gradient(ellipse at center, transparent 30%, hsl(var(--background) / 0.7) 100%)",
             }} />
-
-            {/* Bottom fade into page */}
             <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent" />
-
-            {/* Content */}
             <div className="absolute inset-0 flex items-end px-8 pb-8">
               <div className="max-w-lg space-y-2">
-                <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-primary/70 font-medium">
+                <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.15em] text-primary/70 font-medium">
                   <Star className="h-3 w-3 fill-star text-star" />
                   Featured
                 </div>
@@ -72,8 +62,6 @@ export default function HomePage() {
                   ))}
                 </div>
               </div>
-
-              {/* Subtle play hint */}
               <div className="hidden sm:flex ml-auto mb-2 items-center justify-center w-12 h-12 rounded-full border border-foreground/10 bg-foreground/5 backdrop-blur-sm group-hover:bg-primary/10 group-hover:border-primary/30 transition-all duration-300">
                 <Play className="h-5 w-5 text-foreground/40 group-hover:text-primary transition-colors duration-300 ml-0.5" />
               </div>
@@ -88,11 +76,14 @@ export default function HomePage() {
 
       {/* Performers Row */}
       <section>
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="text-sm font-semibold text-foreground uppercase tracking-wide">Performers</h2>
+        <div className="flex items-center justify-between mb-2.5">
+          <div className="flex items-center gap-3">
+            <h2 className="text-sm font-semibold text-foreground uppercase tracking-[0.08em]">Performers</h2>
+            <div className="h-px flex-1 min-w-[24px] bg-border/40" />
+          </div>
           <Link to="/performers" className="text-[10px] text-primary hover:underline">View All</Link>
         </div>
-        <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
+        <div className="flex gap-2.5 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
           {performers.map((p) => (
             <div key={p.id} className="min-w-[100px] w-[100px] flex-shrink-0">
               <PerformerCard performer={p} />
@@ -103,26 +94,34 @@ export default function HomePage() {
 
       {/* Collections Grid */}
       <section>
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="text-sm font-semibold text-foreground uppercase tracking-wide">Collections</h2>
+        <div className="flex items-center justify-between mb-2.5">
+          <div className="flex items-center gap-3">
+            <h2 className="text-sm font-semibold text-foreground uppercase tracking-[0.08em]">Collections</h2>
+            <div className="h-px flex-1 min-w-[24px] bg-border/40" />
+          </div>
           <Link to="/collections" className="text-[10px] text-primary hover:underline">View All</Link>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2.5">
           {collections.map((col) => (
             <Link
               key={col.id}
               to={`/collection/${col.id}`}
-              className="group rounded overflow-hidden relative transition-all duration-300 ease-out hover:scale-[1.03] shadow-sm hover:shadow-[0_4px_20px_hsl(var(--primary)/0.12)]"
+              className="group rounded-lg overflow-hidden relative transition-all duration-250 ease-out group-hover:scale-[1.02] group-hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)] border border-transparent group-hover:border-primary/20"
             >
               <div
                 className="aspect-video relative"
                 style={{ background: `linear-gradient(135deg, ${col.coverColor}, hsl(var(--card)))` }}
               >
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="absolute bottom-2 left-2 right-2">
-                  <h3 className="text-xs font-semibold text-foreground truncate">{col.name}</h3>
-                  <p className="text-[10px] text-muted-foreground">{col.videoIds.length} items</p>
+                {/* Noise */}
+                <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay" style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
+                  backgroundSize: "128px 128px",
+                }} />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-250" />
+                <div className="absolute bottom-2.5 left-2.5 right-2.5">
+                  <h3 className="text-xs font-bold text-foreground truncate">{col.name}</h3>
+                  <p className="text-[9px] text-muted-foreground/60 mt-0.5 uppercase tracking-widest font-medium">{col.videoIds.length} items</p>
                 </div>
               </div>
             </Link>
@@ -132,8 +131,11 @@ export default function HomePage() {
 
       {/* All Items Grid */}
       <section>
-        <h2 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-2">Browse All</h2>
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8 gap-2">
+        <div className="flex items-center gap-3 mb-2.5">
+          <h2 className="text-sm font-semibold text-foreground uppercase tracking-[0.08em]">Browse All</h2>
+          <div className="h-px flex-1 bg-border/40" />
+        </div>
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8 gap-2.5">
           {videos.map((v) => (
             <VideoCard key={v.id} video={v} />
           ))}
