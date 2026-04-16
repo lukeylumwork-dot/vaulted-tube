@@ -1,5 +1,7 @@
 import { useRef, useMemo, useState, useEffect, useCallback } from "react";
 import { useCatalog } from "@/context/CatalogContext";
+import { useUserPrefs } from "@/context/UserPrefsContext";
+import { getRecommendedVideos, hasPersonalization } from "@/lib/recommendations";
 import { performers, tags, collections, getPerformerById, formatDuration } from "@/data/mockData";
 import CategoryRow from "@/components/CategoryRow";
 import PerformerCard from "@/components/PerformerCard";
@@ -26,22 +28,49 @@ function FadeInSection({ children, delay = 0 }: { children: React.ReactNode; del
 
 export default function HomePage() {
   const { videos } = useCatalog();
+  const { prefs } = useUserPrefs();
 
-  const recentlyAdded = [...videos].sort((a, b) => b.dateAdded.localeCompare(a.dateAdded)).slice(0, 12);
-  const favorites = videos.filter((v) => v.isFavorite);
-  const topRated = [...videos].sort((a, b) => b.rating - a.rating).slice(0, 12);
+  // Derive favorite IDs from catalog state (isFavorite flag)
+  const favoriteVideoIds = useMemo(
+    () => videos.filter((v) => v.isFavorite).map((v) => v.id),
+    [videos]
+  );
 
-  const featured = topRated[0];
+  // Personalised sort — falls back to rating order when no signals exist
+  const recommendedVideos = useMemo(
+    () => getRecommendedVideos(videos, { prefs, favoriteVideoIds }),
+    [videos, prefs, favoriteVideoIds]
+  );
 
-  const sections = useMemo(() => [
-    { id: "featured", label: "Featured" },
-    { id: "recent", label: "Recently Added" },
-    { id: "favorites", label: "Favorites" },
-    { id: "top-rated", label: "Top Rated" },
-    { id: "performers", label: "Performers" },
-    { id: "collections", label: "Collections" },
-    { id: "browse", label: "Browse All" },
-  ], []);
+  const showForYou = hasPersonalization(prefs, favoriteVideoIds);
+
+  const recentlyAdded = useMemo(
+    () => [...videos].sort((a, b) => b.dateAdded.localeCompare(a.dateAdded)).slice(0, 12),
+    [videos]
+  );
+  const favorites = useMemo(() => videos.filter((v) => v.isFavorite), [videos]);
+  const topRated = useMemo(
+    () => [...videos].sort((a, b) => b.rating - a.rating).slice(0, 12),
+    [videos]
+  );
+
+  // Featured: top recommendation (personalised when signals exist, rating-based otherwise)
+  const featured = recommendedVideos[0];
+  const forYouVideos = recommendedVideos.slice(0, 12);
+
+  const sections = useMemo(
+    () => [
+      { id: "featured", label: "Featured" },
+      ...(showForYou ? [{ id: "for-you", label: "For You" }] : []),
+      { id: "recent", label: "Recently Added" },
+      { id: "favorites", label: "Favorites" },
+      { id: "top-rated", label: "Top Rated" },
+      { id: "performers", label: "Performers" },
+      { id: "collections", label: "Collections" },
+      { id: "browse", label: "Browse All" },
+    ],
+    [showForYou]
+  );
 
   const [activeSection, setActiveSection] = useState("featured");
   const railRef = useRef<HTMLDivElement>(null);
@@ -53,7 +82,6 @@ export default function HomePage() {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        // Find the topmost visible section
         const visible = entries
           .filter((e) => e.isIntersecting)
           .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
@@ -74,9 +102,9 @@ export default function HomePage() {
     btn?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
   }, [activeSection]);
 
-  const scrollToSection = (id: string) => {
+  const scrollToSection = useCallback((id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+  }, []);
 
   return (
     <div className="space-y-0">
@@ -106,7 +134,6 @@ export default function HomePage() {
       {featured && (
         <Link id="featured" to={`/video/${featured.id}`} className="group block -mx-4 mb-8 scroll-mt-24">
           <div className="relative w-full overflow-hidden" style={{ height: "clamp(340px, 55vh, 560px)" }}>
-            {/* Background — intensified gradients for dominance */}
             <div className="absolute inset-0 animate-[heroBgIn_1.2s_ease-out_both] origin-center" style={{
               background: `
                 radial-gradient(ellipse at 15% 20%, ${featured.thumbnailColor}88 0%, transparent 50%),
@@ -117,25 +144,20 @@ export default function HomePage() {
                 hsl(var(--background))
               `,
             }} />
-            {/* Noise */}
             <div className="absolute inset-0 opacity-[0.05] mix-blend-overlay" style={{
               backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
               backgroundSize: "128px 128px",
             }} />
-            {/* Deep vignette */}
             <div className="absolute inset-0" style={{
               background: "radial-gradient(ellipse at center, transparent 15%, hsl(var(--background) / 0.85) 100%)",
             }} />
-            {/* Extended bottom fade — creates hard separation from content below */}
             <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-background via-background/90 via-40% to-transparent" />
-            {/* Top shadow */}
             <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background/50 to-transparent" />
-            {/* Content */}
             <div className="absolute inset-0 flex items-end px-8 pb-12 animate-[heroContentIn_0.9s_ease-out_0.3s_both]">
               <div className="max-w-xl space-y-3">
                 <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-primary/90 font-semibold">
                   <Star className="h-3 w-3 fill-star text-star" />
-                  Featured
+                  {showForYou ? "Recommended for you" : "Featured"}
                 </div>
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground leading-[1.1] tracking-tight group-hover:text-primary transition-colors duration-300 drop-shadow-md">
                   {featured.title}
@@ -164,7 +186,15 @@ export default function HomePage() {
         </Link>
       )}
 
-      {/* Content rows with scroll targets */}
+      {/* For You — only shown when personalisation signals exist */}
+      {showForYou && (
+        <div id="for-you" className="mt-2 scroll-mt-24">
+          <FadeInSection>
+            <CategoryRow title="For You" videos={forYouVideos} variant="featured" />
+          </FadeInSection>
+        </div>
+      )}
+
       <div id="recent" className="mt-2 scroll-mt-24">
         <FadeInSection>
           <CategoryRow title="Recently Added" videos={recentlyAdded} variant="featured" />
@@ -231,7 +261,6 @@ export default function HomePage() {
                 const lightX = (c1 % 50) + 20;
                 const lightY = (c2 % 40) + 15;
                 const noiseOpacity = 0.03 + (c2 % 4) * 0.01;
-                // First item spans 2 columns for asymmetry
                 const isWide = idx === 0;
 
                 return (

@@ -1,6 +1,8 @@
+import { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Heart, Star, Clock, Calendar, ArrowLeft, Tag } from "lucide-react";
+import { Heart, ThumbsUp, Star, Clock, Calendar, ArrowLeft, Tag } from "lucide-react";
 import { useCatalog } from "@/context/CatalogContext";
+import { useUserPrefs } from "@/context/UserPrefsContext";
 import { getPerformerById, getTagById, formatDuration } from "@/data/mockData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +10,15 @@ import { Badge } from "@/components/ui/badge";
 export default function VideoDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { videos, toggleFavorite } = useCatalog();
+  const { prefs, markWatched, toggleLike } = useUserPrefs();
   const video = videos.find((v) => v.id === id);
+
+  const isLiked = video ? prefs.likedVideoIds.includes(video.id) : false;
+
+  // Record a watch event when the detail page is opened
+  useEffect(() => {
+    if (video) markWatched(video.id);
+  }, [video?.id, markWatched]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!video) {
     return (
@@ -42,13 +52,33 @@ export default function VideoDetailPage() {
         <div className="space-y-4">
           <div className="flex items-start justify-between">
             <h1 className="text-2xl font-bold text-foreground">{video.title}</h1>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => toggleFavorite(video.id)}
-            >
-              <Heart className={`h-5 w-5 ${video.isFavorite ? "fill-destructive text-destructive" : "text-muted-foreground"}`} />
-            </Button>
+            {/* Like + Favourite actions */}
+            <div className="flex items-center gap-0.5 shrink-0">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => toggleLike(video.id)}
+                title={isLiked ? "Unlike" : "Like"}
+              >
+                <ThumbsUp
+                  className={`h-5 w-5 transition-colors ${
+                    isLiked ? "fill-primary text-primary" : "text-muted-foreground"
+                  }`}
+                />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => toggleFavorite(video.id)}
+                title={video.isFavorite ? "Remove from favourites" : "Add to favourites"}
+              >
+                <Heart
+                  className={`h-5 w-5 transition-colors ${
+                    video.isFavorite ? "fill-destructive text-destructive" : "text-muted-foreground"
+                  }`}
+                />
+              </Button>
+            </div>
           </div>
 
           {/* Rating */}

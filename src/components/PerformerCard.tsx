@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { Performer } from "@/types";
-import { useState } from "react";
+import { useUserPrefs } from "@/context/UserPrefsContext";
 
 export default function PerformerCard({ performer }: { performer: Performer }) {
-  const [isFav, setIsFav] = useState(false);
+  const { prefs, toggleFavoritePerformer } = useUserPrefs();
+  const isFav = prefs.favoritePerformerIds.includes(performer.id);
 
   // Per-card variation seeds
   const s1 = performer.id.charCodeAt(0) || 65;
@@ -69,12 +70,12 @@ export default function PerformerCard({ performer }: { performer: Performer }) {
           {/* Hover overlay */}
           <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-250" />
 
-          {/* Favorite button */}
+          {/* Favourite button — persisted via UserPrefsContext */}
           <button
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              setIsFav(!isFav);
+              toggleFavoritePerformer(performer.id);
             }}
             className="absolute top-2 right-2 p-1.5 rounded-full bg-black/50 backdrop-blur-sm hover:bg-black/70 transition-all opacity-0 group-hover:opacity-100 z-10"
           >
