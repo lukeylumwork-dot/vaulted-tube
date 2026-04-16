@@ -1,10 +1,7 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Search, Home, Users, Tag, FolderOpen, Settings, LogOut, Film } from "lucide-react";
+import { Search, Home, Users, Tag, FolderOpen, Settings, Film } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
@@ -16,11 +13,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     if (searchQuery.trim()) {
       navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
     }
-  };
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/login");
   };
 
   const navItems = [
@@ -71,12 +63,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 </Link>
               );
             })}
-            <Button variant="ghost" size="icon" onClick={handleLogout} title="Logout" className="h-7 w-7 ml-1">
-              <LogOut className="h-3.5 w-3.5" />
-            </Button>
           </div>
         </div>
-
       </header>
 
       {/* Metadata-only notice */}
