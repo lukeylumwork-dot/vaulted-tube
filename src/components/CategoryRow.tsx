@@ -20,26 +20,26 @@ export default function CategoryRow({ title, videos, viewAllLink }: Props) {
   if (videos.length === 0) return null;
 
   return (
-    <section className="mb-8">
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-lg font-semibold text-foreground">{title}</h2>
-        <div className="flex items-center gap-2">
+    <section>
+      <div className="flex items-center justify-between mb-1.5">
+        <h2 className="text-sm font-semibold text-foreground uppercase tracking-wide">{title}</h2>
+        <div className="flex items-center gap-1">
           {viewAllLink && (
-            <a href={viewAllLink} className="text-xs text-primary hover:underline">
+            <a href={viewAllLink} className="text-[10px] text-primary hover:underline mr-1">
               View All
             </a>
           )}
-          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => scroll("left")}>
-            <ChevronLeft className="h-4 w-4" />
+          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => scroll("left")}>
+            <ChevronLeft className="h-3.5 w-3.5" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => scroll("right")}>
-            <ChevronRight className="h-4 w-4" />
+          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => scroll("right")}>
+            <ChevronRight className="h-3.5 w-3.5" />
           </Button>
         </div>
       </div>
-      <div ref={scrollRef} className="flex gap-4 overflow-x-auto pb-2 scrollbar-none" style={{ scrollbarWidth: "none" }}>
+      <div ref={scrollRef} className="flex gap-2 overflow-x-auto pb-1 scrollbar-none" style={{ scrollbarWidth: "none" }}>
         {videos.map((v) => (
-          <div key={v.id} className="min-w-[200px] max-w-[200px]">
+          <div key={v.id} className="min-w-[150px] max-w-[150px]">
             <VideoCard video={v} />
           </div>
         ))}

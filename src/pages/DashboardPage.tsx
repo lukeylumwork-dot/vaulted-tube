@@ -85,41 +85,22 @@ export default function DashboardPage() {
   if (mode === "list") {
     return (
       <div className="animate-fade-in">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-            <p className="text-sm text-muted-foreground">Manage your catalog metadata</p>
-          </div>
-          <Button onClick={() => setMode("add")}>
-            <Plus className="h-4 w-4 mr-2" /> Add Item
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-sm font-semibold text-foreground uppercase tracking-wide">Manage Catalog</h1>
+          <Button size="sm" onClick={() => setMode("add")} className="h-7 text-xs">
+            <Plus className="h-3 w-3 mr-1" /> Add Item
           </Button>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {[
-            { label: "Total Items", value: videos.length },
-            { label: "Performers", value: performers.length },
-            { label: "Tags", value: tags.length },
-            { label: "Collections", value: collections.length },
-          ].map((s) => (
-            <div key={s.label} className="bg-card border border-border rounded-lg p-4">
-              <p className="text-2xl font-bold text-foreground">{s.value}</p>
-              <p className="text-xs text-muted-foreground">{s.label}</p>
-            </div>
-          ))}
-        </div>
-
-        <h2 className="text-lg font-semibold text-foreground mb-4">All Items</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8 gap-2">
           {videos.map((v) => (
             <div key={v.id} className="relative group">
               <VideoCard video={v} />
               <button
                 onClick={(e) => { e.preventDefault(); startEdit(v); }}
-                className="absolute top-2 left-2 p-1.5 rounded-full bg-background/60 hover:bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-1.5 left-1.5 p-1 rounded bg-black/50 hover:bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity"
               >
-                <Edit2 className="h-3 w-3 text-foreground" />
+                <Edit2 className="h-2.5 w-2.5 text-foreground" />
               </button>
             </div>
           ))}
@@ -131,36 +112,38 @@ export default function DashboardPage() {
   // Add/Edit form
   return (
     <div className="max-w-2xl mx-auto animate-fade-in">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-foreground">{mode === "edit" ? "Edit Item" : "Add New Item"}</h1>
-        <Button variant="ghost" onClick={resetForm}><X className="h-4 w-4" /></Button>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-sm font-semibold text-foreground uppercase tracking-wide">
+          {mode === "edit" ? "Edit Item" : "Add New Item"}
+        </h1>
+        <Button variant="ghost" size="sm" onClick={resetForm}><X className="h-3.5 w-3.5" /></Button>
       </div>
 
-      <div className="space-y-5">
+      <div className="space-y-4">
         <div>
-          <label className="text-sm font-medium text-foreground mb-1 block">Title *</label>
-          <Input value={form.title} onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))} className="bg-secondary" />
+          <label className="text-xs font-medium text-foreground mb-1 block">Title *</label>
+          <Input value={form.title} onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))} className="bg-secondary h-8 text-sm" />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-sm font-medium text-foreground mb-1 block">Duration (minutes)</label>
-            <Input type="number" value={form.duration} onChange={(e) => setForm((p) => ({ ...p, duration: e.target.value }))} className="bg-secondary" />
+            <label className="text-xs font-medium text-foreground mb-1 block">Duration (min)</label>
+            <Input type="number" value={form.duration} onChange={(e) => setForm((p) => ({ ...p, duration: e.target.value }))} className="bg-secondary h-8 text-sm" />
           </div>
           <div>
-            <label className="text-sm font-medium text-foreground mb-1 block">Rating (1-5)</label>
-            <Input type="number" min="1" max="5" value={form.rating} onChange={(e) => setForm((p) => ({ ...p, rating: e.target.value }))} className="bg-secondary" />
+            <label className="text-xs font-medium text-foreground mb-1 block">Rating (1-5)</label>
+            <Input type="number" min="1" max="5" value={form.rating} onChange={(e) => setForm((p) => ({ ...p, rating: e.target.value }))} className="bg-secondary h-8 text-sm" />
           </div>
         </div>
 
         <div>
-          <label className="text-sm font-medium text-foreground mb-1 block">Performers</label>
-          <div className="flex flex-wrap gap-2">
+          <label className="text-xs font-medium text-foreground mb-1 block">Performers</label>
+          <div className="flex flex-wrap gap-1.5">
             {performers.map((p) => (
               <Badge
                 key={p.id}
                 variant={form.performers.includes(p.id) ? "default" : "outline"}
-                className="cursor-pointer"
+                className="cursor-pointer text-[10px] px-2 py-0.5"
                 onClick={() => toggleArrayItem("performers", p.id)}
               >
                 {p.name}
@@ -170,13 +153,13 @@ export default function DashboardPage() {
         </div>
 
         <div>
-          <label className="text-sm font-medium text-foreground mb-1 block">Tags</label>
-          <div className="flex flex-wrap gap-2">
+          <label className="text-xs font-medium text-foreground mb-1 block">Tags</label>
+          <div className="flex flex-wrap gap-1.5">
             {tags.map((t) => (
               <Badge
                 key={t.id}
                 variant={form.tags.includes(t.id) ? "default" : "outline"}
-                className="cursor-pointer"
+                className="cursor-pointer text-[10px] px-2 py-0.5"
                 onClick={() => toggleArrayItem("tags", t.id)}
               >
                 {t.name}
@@ -186,13 +169,13 @@ export default function DashboardPage() {
         </div>
 
         <div>
-          <label className="text-sm font-medium text-foreground mb-1 block">Collections</label>
-          <div className="flex flex-wrap gap-2">
+          <label className="text-xs font-medium text-foreground mb-1 block">Collections</label>
+          <div className="flex flex-wrap gap-1.5">
             {collections.map((c) => (
               <Badge
                 key={c.id}
                 variant={form.collections.includes(c.id) ? "default" : "outline"}
-                className="cursor-pointer"
+                className="cursor-pointer text-[10px] px-2 py-0.5"
                 onClick={() => toggleArrayItem("collections", c.id)}
               >
                 {c.name}
@@ -202,12 +185,12 @@ export default function DashboardPage() {
         </div>
 
         <div>
-          <label className="text-sm font-medium text-foreground mb-1 block">Notes</label>
-          <Textarea value={form.notes} onChange={(e) => setForm((p) => ({ ...p, notes: e.target.value }))} className="bg-secondary" rows={3} />
+          <label className="text-xs font-medium text-foreground mb-1 block">Notes</label>
+          <Textarea value={form.notes} onChange={(e) => setForm((p) => ({ ...p, notes: e.target.value }))} className="bg-secondary text-sm" rows={2} />
         </div>
 
-        <Button onClick={handleSave} className="w-full">
-          <Save className="h-4 w-4 mr-2" /> {mode === "edit" ? "Update Item" : "Add Item"}
+        <Button onClick={handleSave} className="w-full h-8 text-xs">
+          <Save className="h-3 w-3 mr-1" /> {mode === "edit" ? "Update" : "Add Item"}
         </Button>
       </div>
     </div>

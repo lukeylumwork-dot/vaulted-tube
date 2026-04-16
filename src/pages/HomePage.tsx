@@ -2,84 +2,72 @@ import { useCatalog } from "@/context/CatalogContext";
 import { performers, tags, collections, getVideosByCollection } from "@/data/mockData";
 import CategoryRow from "@/components/CategoryRow";
 import PerformerCard from "@/components/PerformerCard";
+import VideoCard from "@/components/VideoCard";
 import { Link } from "react-router-dom";
 
 export default function HomePage() {
   const { videos } = useCatalog();
 
-  const recentlyAdded = [...videos].sort((a, b) => b.dateAdded.localeCompare(a.dateAdded)).slice(0, 8);
+  const recentlyAdded = [...videos].sort((a, b) => b.dateAdded.localeCompare(a.dateAdded)).slice(0, 12);
   const favorites = videos.filter((v) => v.isFavorite);
-  const topRated = [...videos].sort((a, b) => b.rating - a.rating).slice(0, 8);
+  const topRated = [...videos].sort((a, b) => b.rating - a.rating).slice(0, 12);
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground mb-1">Welcome back, Curator</h1>
-        <p className="text-sm text-muted-foreground">
-          {videos.length} items in your catalog • {favorites.length} favorites
-        </p>
-      </div>
-
+    <div className="space-y-5">
       <CategoryRow title="Recently Added" videos={recentlyAdded} />
-      <CategoryRow title="⭐ Favorites" videos={favorites} />
+      <CategoryRow title="Favorites" videos={favorites} />
       <CategoryRow title="Top Rated" videos={topRated} />
 
       {/* Performers Row */}
-      <section className="mb-8">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-foreground">Performers</h2>
-          <Link to="/performers" className="text-xs text-primary hover:underline">View All</Link>
+      <section>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-sm font-semibold text-foreground uppercase tracking-wide">Performers</h2>
+          <Link to="/performers" className="text-[10px] text-primary hover:underline">View All</Link>
         </div>
-        <div className="flex gap-6 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
+        <div className="flex gap-4 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
           {performers.map((p) => (
-            <div key={p.id} className="min-w-[100px]">
+            <div key={p.id} className="min-w-[80px]">
               <PerformerCard performer={p} />
             </div>
           ))}
         </div>
       </section>
 
-      {/* Collections */}
-      <section className="mb-8">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-foreground">Collections</h2>
-          <Link to="/collections" className="text-xs text-primary hover:underline">View All</Link>
+      {/* Collections Grid */}
+      <section>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-sm font-semibold text-foreground uppercase tracking-wide">Collections</h2>
+          <Link to="/collections" className="text-[10px] text-primary hover:underline">View All</Link>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2">
           {collections.map((col) => (
             <Link
               key={col.id}
               to={`/collection/${col.id}`}
-              className="card-hover rounded-lg p-4 border border-border bg-card"
+              className="group rounded overflow-hidden relative"
             >
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-md" style={{ backgroundColor: col.coverColor }} />
-                <div>
-                  <h3 className="text-sm font-medium text-foreground">{col.name}</h3>
-                  <p className="text-xs text-muted-foreground">{col.videoIds.length} items</p>
+              <div
+                className="aspect-video relative"
+                style={{ background: `linear-gradient(135deg, ${col.coverColor}, hsl(var(--card)))` }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute bottom-2 left-2 right-2">
+                  <h3 className="text-xs font-semibold text-foreground truncate">{col.name}</h3>
+                  <p className="text-[10px] text-muted-foreground">{col.videoIds.length} items</p>
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground">{col.description}</p>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* Tags Cloud */}
+      {/* All Items Grid */}
       <section>
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-foreground">Tags</h2>
-          <Link to="/tags" className="text-xs text-primary hover:underline">View All</Link>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {tags.slice(0, 10).map((t) => (
-            <Link
-              key={t.id}
-              to={`/tag/${t.id}`}
-              className="px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground text-xs font-medium hover:bg-primary/10 hover:text-primary transition-colors"
-            >
-              {t.name} ({t.videoCount})
-            </Link>
+        <h2 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-2">Browse All</h2>
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8 gap-2">
+          {videos.map((v) => (
+            <VideoCard key={v.id} video={v} />
           ))}
         </div>
       </section>
