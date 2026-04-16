@@ -105,7 +105,7 @@ export default function HomePage() {
         <CategoryRow title="Top Rated" videos={topRated} variant="compact" />
       </FadeInSection>
 
-      {/* Performers Row */}
+      <FadeInSection>
       <section>
         <div className="flex items-center justify-between mb-2.5">
           <div className="flex items-center gap-3">
