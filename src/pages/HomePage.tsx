@@ -1,4 +1,4 @@
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useState, useEffect, useCallback } from "react";
 import { useCatalog } from "@/context/CatalogContext";
 import { performers, tags, collections, getPerformerById, formatDuration } from "@/data/mockData";
 import CategoryRow from "@/components/CategoryRow";
@@ -43,21 +43,57 @@ export default function HomePage() {
     { id: "browse", label: "Browse All" },
   ], []);
 
+  const [activeSection, setActiveSection] = useState("featured");
+  const railRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ids = sections.map((s) => s.id);
+    const elements = ids.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+    if (elements.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Find the topmost visible section
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible.length > 0) {
+          setActiveSection(visible[0].target.id);
+        }
+      },
+      { rootMargin: "-20% 0px -60% 0px", threshold: 0 }
+    );
+
+    elements.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [sections]);
+
+  // Auto-scroll rail to keep active button visible
+  useEffect(() => {
+    const btn = railRef.current?.querySelector(`[data-section="${activeSection}"]`) as HTMLElement | null;
+    btn?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  }, [activeSection]);
+
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
     <div className="space-y-0">
-      {/* Discovery Rail — anchors the page below the global header */}
+      {/* Discovery Rail */}
       <div className="-mx-4 -mt-4 mb-4 sticky top-[theme(spacing.12)] z-30">
         <div className="bg-background/80 backdrop-blur-md border-b border-border/30">
-          <div className="flex items-center gap-0.5 px-4 py-2 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+          <div ref={railRef} className="flex items-center gap-0.5 px-4 py-2 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
             {sections.map((s) => (
               <button
                 key={s.id}
+                data-section={s.id}
                 onClick={() => scrollToSection(s.id)}
-                className="shrink-0 px-3 py-1.5 rounded-full text-[11px] font-medium text-muted-foreground/70 hover:text-foreground hover:bg-secondary/60 transition-all duration-200 whitespace-nowrap"
+                className={`shrink-0 px-3 py-1.5 rounded-full text-[11px] font-medium transition-all duration-200 whitespace-nowrap ${
+                  activeSection === s.id
+                    ? "bg-primary/15 text-primary"
+                    : "text-muted-foreground/70 hover:text-foreground hover:bg-secondary/60"
+                }`}
               >
                 {s.label}
               </button>
