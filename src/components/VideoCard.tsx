@@ -8,8 +8,8 @@ export default function VideoCard({ video }: { video: Video }) {
   const { toggleFavorite } = useCatalog();
 
   return (
-    <Link to={`/video/${video.id}`} className="group block">
-      <div className="relative rounded overflow-hidden">
+    <Link to={`/video/${video.id}`} className="group block transition-transform duration-300 ease-out hover:scale-[1.03]">
+      <div className="relative rounded overflow-hidden shadow-sm transition-shadow duration-300 group-hover:shadow-[0_4px_20px_hsl(var(--primary)/0.12)]">
         {/* Cinematic thumbnail */}
         <div
           className="aspect-video relative overflow-hidden"

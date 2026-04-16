@@ -3,8 +3,8 @@ import { Performer } from "@/types";
 
 export default function PerformerCard({ performer }: { performer: Performer }) {
   return (
-    <Link to={`/performer/${performer.id}`} className="group block">
-      <div className="relative rounded overflow-hidden">
+    <Link to={`/performer/${performer.id}`} className="group block transition-transform duration-300 ease-out hover:scale-[1.03]">
+      <div className="relative rounded overflow-hidden shadow-sm transition-shadow duration-300 group-hover:shadow-[0_4px_20px_hsl(var(--primary)/0.12)]">
         <div
           className="aspect-[3/4] relative overflow-hidden"
           style={{
