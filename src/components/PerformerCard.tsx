@@ -1,7 +1,11 @@
 import { Link } from "react-router-dom";
+import { Heart } from "lucide-react";
 import { Performer } from "@/types";
+import { useState } from "react";
 
 export default function PerformerCard({ performer }: { performer: Performer }) {
+  const [isFav, setIsFav] = useState(false);
+
   // Per-card variation seeds
   const s1 = performer.id.charCodeAt(0) || 65;
   const s2 = performer.id.charCodeAt(1) || 66;
@@ -56,21 +60,37 @@ export default function PerformerCard({ performer }: { performer: Performer }) {
 
           {/* Initial letter */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-3xl font-bold text-foreground/8">{performer.name.charAt(0)}</span>
+            <span className="text-4xl font-bold text-foreground/[0.06] select-none">{performer.name.charAt(0)}</span>
           </div>
 
           {/* Bottom gradient */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
 
-          {/* Hover */}
+          {/* Hover overlay */}
           <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-250" />
 
+          {/* Favorite button */}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsFav(!isFav);
+            }}
+            className="absolute top-2 right-2 p-1.5 rounded-full bg-black/50 backdrop-blur-sm hover:bg-black/70 transition-all opacity-0 group-hover:opacity-100 z-10"
+          >
+            <Heart
+              className={`h-3 w-3 transition-colors ${
+                isFav ? "fill-destructive text-destructive" : "text-foreground/70"
+              }`}
+            />
+          </button>
+
           {/* Info overlay */}
-          <div className="absolute bottom-0 left-0 right-0 p-2.5">
-            <h3 className="text-xs font-bold text-foreground truncate group-hover:text-primary transition-colors duration-250">
+          <div className="absolute bottom-0 left-0 right-0 p-3">
+            <h3 className="text-sm font-bold text-foreground truncate group-hover:text-primary transition-colors duration-250 leading-snug">
               {performer.name}
             </h3>
-            <p className="text-[9px] text-muted-foreground/60 mt-0.5 uppercase tracking-widest font-medium">
+            <p className="text-[10px] text-muted-foreground/50 mt-0.5 font-medium">
               {performer.videoCount} {performer.videoCount === 1 ? "item" : "items"}
             </p>
           </div>
