@@ -33,8 +33,8 @@ export default function HomePage() {
   const featured = topRated[0];
 
   return (
-    <div className="space-y-6">
-      {/* Hero / Featured */}
+    <div className="space-y-0">
+      {/* Varied vertical rhythm via per-section margins */}
       {featured && (
         <Link to={`/video/${featured.id}`} className="group block -mx-4 -mt-4 mb-8">
           <div className="relative w-full overflow-hidden" style={{ height: "clamp(340px, 55vh, 560px)" }}>
@@ -96,117 +96,140 @@ export default function HomePage() {
         </Link>
       )}
 
-      <FadeInSection>
-        <CategoryRow title="Recently Added" videos={recentlyAdded} variant="featured" />
-      </FadeInSection>
-      <FadeInSection delay={80}>
-        <CategoryRow title="Favorites" videos={favorites} />
-      </FadeInSection>
-      <FadeInSection delay={160}>
-        <CategoryRow title="Top Rated" videos={topRated} variant="compact" />
-      </FadeInSection>
+      {/* Asymmetric spacing between rows */}
+      <div className="mt-2">
+        <FadeInSection>
+          <CategoryRow title="Recently Added" videos={recentlyAdded} variant="featured" />
+        </FadeInSection>
+      </div>
 
-      <FadeInSection>
-      {/* Performers Row */}
-      <section>
-        <div className="flex items-center justify-between mb-2.5">
-          <div className="flex items-center gap-3">
-            <h2 className="text-sm font-semibold text-foreground uppercase tracking-[0.08em]">Performers</h2>
-            <div className="h-px flex-1 min-w-[24px] bg-border/40" />
-          </div>
-          <Link to="/performers" className="text-[10px] text-primary hover:underline">View All</Link>
-        </div>
-        <div className="flex gap-2.5 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
-          {performers.map((p) => (
-            <div key={p.id} className="min-w-[100px] w-[100px] flex-shrink-0">
-              <PerformerCard performer={p} />
+      <div className="mt-8">
+        <FadeInSection delay={80}>
+          <CategoryRow title="Favorites" videos={favorites} />
+        </FadeInSection>
+      </div>
+
+      <div className="mt-5">
+        <FadeInSection delay={160}>
+          <CategoryRow title="Top Rated" videos={topRated} variant="compact" />
+        </FadeInSection>
+      </div>
+
+      {/* Performers — offset header with left padding */}
+      <div className="mt-10">
+        <FadeInSection>
+          <section>
+            <div className="flex items-center justify-between mb-3 pl-1">
+              <div className="flex items-center gap-3">
+                <h2 className="text-sm font-semibold text-foreground uppercase tracking-[0.08em]">Performers</h2>
+                <div className="h-px flex-1 min-w-[24px] bg-border/40" />
+              </div>
+              <Link to="/performers" className="text-[10px] text-primary hover:underline">View All</Link>
             </div>
-          ))}
-        </div>
-      </section>
-      </FadeInSection>
-
-      <FadeInSection>
-      {/* Collections Grid */}
-      <section>
-        <div className="flex items-center justify-between mb-2.5">
-          <div className="flex items-center gap-3">
-            <h2 className="text-sm font-semibold text-foreground uppercase tracking-[0.08em]">Collections</h2>
-            <div className="h-px flex-1 min-w-[24px] bg-border/40" />
-          </div>
-          <Link to="/collections" className="text-[10px] text-primary hover:underline">View All</Link>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2.5">
-          {collections.map((col) => {
-            const c1 = col.id.charCodeAt(0) || 65;
-            const c2 = col.id.charCodeAt(1) || 66;
-            const gradAngle = (c1 * 13) % 360;
-            const lightX = (c1 % 50) + 20;
-            const lightY = (c2 % 40) + 15;
-            const noiseOpacity = 0.03 + (c2 % 4) * 0.01;
-
-            return (
-              <Link
-                key={col.id}
-                to={`/collection/${col.id}`}
-                className="group rounded-lg overflow-hidden relative transition-all duration-250 ease-out hover:scale-[1.02] hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)] border border-transparent hover:border-primary/20"
-              >
+            <div className="flex gap-2.5 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
+              {performers.map((p, i) => (
                 <div
-                  className="aspect-video relative overflow-hidden"
-                  style={{
-                    background: `
-                      radial-gradient(ellipse at ${lightX}% ${lightY}%, ${col.coverColor}55 0%, transparent 55%),
-                      radial-gradient(ellipse at ${100 - lightX}% ${100 - lightY}%, ${col.coverColor}30 0%, transparent 50%),
-                      radial-gradient(circle at ${(c2 % 60) + 20}% ${(c1 % 40) + 10}%, hsl(var(--primary) / 0.0${3 + c1 % 5}) 0%, transparent 40%),
-                      linear-gradient(${gradAngle}deg, hsl(var(--card)) 0%, hsl(var(--background)) 100%)
-                    `,
-                  }}
+                  key={p.id}
+                  className={`flex-shrink-0 ${
+                    i === 0
+                      ? "min-w-[130px] w-[130px]"
+                      : i % 3 === 1
+                        ? "min-w-[110px] w-[110px]"
+                        : "min-w-[100px] w-[100px]"
+                  }`}
                 >
-                  {/* Noise */}
-                  <div className="absolute inset-0 mix-blend-overlay" style={{
-                    opacity: noiseOpacity,
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.${7 + c1 % 4}' numOctaves='${3 + c2 % 3}' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
-                    backgroundSize: `${100 + (c2 % 50)}px ${100 + (c2 % 50)}px`,
-                  }} />
-                  {/* Abstract shape */}
-                  <div className="absolute inset-0" style={{
-                    opacity: 0.05 + (c1 % 3) * 0.01,
-                    background: `radial-gradient(${c2 % 2 === 0 ? 'circle' : 'ellipse'} at ${(c2 % 60) + 20}% ${(c1 % 40) + 30}%, ${col.coverColor}45 0%, transparent ${35 + c1 % 15}%)`,
-                  }} />
-                  {/* Vignette */}
-                  <div className="absolute inset-0" style={{
-                    background: "radial-gradient(ellipse at center, transparent 25%, hsl(var(--background) / 0.5) 100%)",
-                  }} />
-                  {/* Bottom gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
-                  {/* Hover glow */}
-                  <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-250" />
-                  <div className="absolute bottom-2.5 left-2.5 right-2.5">
-                    <h3 className="text-xs font-bold text-foreground truncate group-hover:text-primary transition-colors duration-250">{col.name}</h3>
-                    <p className="text-[9px] text-muted-foreground/50 mt-0.5 font-medium">{col.videoIds.length} items</p>
-                  </div>
+                  <PerformerCard performer={p} />
                 </div>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
-      </FadeInSection>
+              ))}
+            </div>
+          </section>
+        </FadeInSection>
+      </div>
 
-      <FadeInSection>
-      {/* All Items Grid */}
-      <section>
-        <div className="flex items-center gap-3 mb-2.5">
-          <h2 className="text-sm font-semibold text-foreground uppercase tracking-[0.08em]">Browse All</h2>
-          <div className="h-px flex-1 bg-border/40" />
-        </div>
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8 gap-2.5">
-          {videos.map((v) => (
-            <VideoCard key={v.id} video={v} />
-          ))}
-        </div>
-      </section>
-      </FadeInSection>
+      {/* Collections — mixed grid with first item spanning 2 cols */}
+      <div className="mt-7">
+        <FadeInSection>
+          <section>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-3">
+                <h2 className="text-sm font-semibold text-foreground uppercase tracking-[0.08em]">Collections</h2>
+                <div className="h-px flex-1 min-w-[24px] bg-border/40" />
+              </div>
+              <Link to="/collections" className="text-[10px] text-primary hover:underline">View All</Link>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2.5">
+              {collections.map((col, idx) => {
+                const c1 = col.id.charCodeAt(0) || 65;
+                const c2 = col.id.charCodeAt(1) || 66;
+                const gradAngle = (c1 * 13) % 360;
+                const lightX = (c1 % 50) + 20;
+                const lightY = (c2 % 40) + 15;
+                const noiseOpacity = 0.03 + (c2 % 4) * 0.01;
+                // First item spans 2 columns for asymmetry
+                const isWide = idx === 0;
+
+                return (
+                  <Link
+                    key={col.id}
+                    to={`/collection/${col.id}`}
+                    className={`group rounded-lg overflow-hidden relative transition-all duration-250 ease-out hover:scale-[1.02] hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)] border border-transparent hover:border-primary/20 ${
+                      isWide ? "col-span-2 sm:col-span-2 lg:col-span-2" : ""
+                    }`}
+                  >
+                    <div
+                      className={`relative overflow-hidden ${isWide ? "aspect-[2.5/1]" : "aspect-video"}`}
+                      style={{
+                        background: `
+                          radial-gradient(ellipse at ${lightX}% ${lightY}%, ${col.coverColor}55 0%, transparent 55%),
+                          radial-gradient(ellipse at ${100 - lightX}% ${100 - lightY}%, ${col.coverColor}30 0%, transparent 50%),
+                          radial-gradient(circle at ${(c2 % 60) + 20}% ${(c1 % 40) + 10}%, hsl(var(--primary) / 0.0${3 + c1 % 5}) 0%, transparent 40%),
+                          linear-gradient(${gradAngle}deg, hsl(var(--card)) 0%, hsl(var(--background)) 100%)
+                        `,
+                      }}
+                    >
+                      <div className="absolute inset-0 mix-blend-overlay" style={{
+                        opacity: noiseOpacity,
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.${7 + c1 % 4}' numOctaves='${3 + c2 % 3}' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
+                        backgroundSize: `${100 + (c2 % 50)}px ${100 + (c2 % 50)}px`,
+                      }} />
+                      <div className="absolute inset-0" style={{
+                        opacity: 0.05 + (c1 % 3) * 0.01,
+                        background: `radial-gradient(${c2 % 2 === 0 ? 'circle' : 'ellipse'} at ${(c2 % 60) + 20}% ${(c1 % 40) + 30}%, ${col.coverColor}45 0%, transparent ${35 + c1 % 15}%)`,
+                      }} />
+                      <div className="absolute inset-0" style={{
+                        background: "radial-gradient(ellipse at center, transparent 25%, hsl(var(--background) / 0.5) 100%)",
+                      }} />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
+                      <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-250" />
+                      <div className="absolute bottom-2.5 left-2.5 right-2.5">
+                        <h3 className={`font-bold text-foreground truncate group-hover:text-primary transition-colors duration-250 ${isWide ? "text-sm" : "text-xs"}`}>{col.name}</h3>
+                        <p className="text-[9px] text-muted-foreground/50 mt-0.5 font-medium">{col.videoIds.length} items</p>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        </FadeInSection>
+      </div>
+
+      {/* Browse All — extra top spacing for breathing room */}
+      <div className="mt-10">
+        <FadeInSection>
+          <section>
+            <div className="flex items-center gap-3 mb-3 pl-0.5">
+              <h2 className="text-sm font-semibold text-foreground uppercase tracking-[0.08em]">Browse All</h2>
+              <div className="h-px flex-1 bg-border/40" />
+            </div>
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8 gap-2.5">
+              {videos.map((v) => (
+                <VideoCard key={v.id} video={v} />
+              ))}
+            </div>
+          </section>
+        </FadeInSection>
+      </div>
     </div>
   );
 }

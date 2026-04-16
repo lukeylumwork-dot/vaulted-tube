@@ -13,21 +13,26 @@ interface Props {
   variant?: RowVariant;
 }
 
-const variantStyles: Record<RowVariant, { gap: string; titleClass: string; heroW: string; smallW: string }> = {
+const variantStyles: Record<RowVariant, {
+  gap: string; titleClass: string; heroW: string; smallW: string; medW: string;
+}> = {
   featured: {
     heroW: "min-w-[340px] max-w-[340px] sm:min-w-[400px] sm:max-w-[400px]",
+    medW: "min-w-[220px] max-w-[220px] sm:min-w-[250px] sm:max-w-[250px]",
     smallW: "min-w-[170px] max-w-[170px] sm:min-w-[190px] sm:max-w-[190px]",
     gap: "gap-3",
     titleClass: "text-sm font-bold text-foreground tracking-[0.08em] uppercase",
   },
   default: {
     heroW: "min-w-[280px] max-w-[280px] sm:min-w-[320px] sm:max-w-[320px]",
+    medW: "min-w-[185px] max-w-[185px] sm:min-w-[210px] sm:max-w-[210px]",
     smallW: "min-w-[140px] max-w-[140px] sm:min-w-[155px] sm:max-w-[155px]",
     gap: "gap-2.5",
     titleClass: "text-sm font-semibold text-foreground tracking-[0.06em] uppercase",
   },
   compact: {
     heroW: "min-w-[240px] max-w-[240px] sm:min-w-[260px] sm:max-w-[260px]",
+    medW: "min-w-[155px] max-w-[155px] sm:min-w-[170px] sm:max-w-[170px]",
     smallW: "min-w-[115px] max-w-[115px] sm:min-w-[125px] sm:max-w-[125px]",
     gap: "gap-2",
     titleClass: "text-xs font-medium text-muted-foreground tracking-[0.1em] uppercase",
@@ -45,6 +50,11 @@ export default function CategoryRow({ title, videos, viewAllLink, variant = "def
   if (videos.length === 0) return null;
 
   const [hero, ...rest] = videos;
+
+  // Pick width class for each remaining card — every 4th gets medium size for rhythm
+  const getCardWidth = (index: number) => {
+    return index % 4 === 2 ? styles.medW : styles.smallW;
+  };
 
   return (
     <section>
@@ -72,8 +82,8 @@ export default function CategoryRow({ title, videos, viewAllLink, variant = "def
         <div className={`${styles.heroW} flex-shrink-0`}>
           <VideoCard video={hero} />
         </div>
-        {rest.map((v) => (
-          <div key={v.id} className={`${styles.smallW} flex-shrink-0`}>
+        {rest.map((v, i) => (
+          <div key={v.id} className={`${getCardWidth(i)} flex-shrink-0`}>
             <VideoCard video={v} />
           </div>
         ))}
