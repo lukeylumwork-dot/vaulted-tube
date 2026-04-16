@@ -128,27 +128,26 @@ export default function HomePage() {
         </Link>
       )}
 
-      {/* Asymmetric spacing between rows */}
-      <div className="mt-2">
+      {/* Content rows with scroll targets */}
+      <div id="recent" className="mt-2 scroll-mt-24">
         <FadeInSection>
           <CategoryRow title="Recently Added" videos={recentlyAdded} variant="featured" />
         </FadeInSection>
       </div>
 
-      <div className="mt-8">
+      <div id="favorites" className="mt-8 scroll-mt-24">
         <FadeInSection delay={80}>
           <CategoryRow title="Favorites" videos={favorites} />
         </FadeInSection>
       </div>
 
-      <div className="mt-5">
+      <div id="top-rated" className="mt-5 scroll-mt-24">
         <FadeInSection delay={160}>
           <CategoryRow title="Top Rated" videos={topRated} variant="compact" />
         </FadeInSection>
       </div>
 
-      {/* Performers — offset header with left padding */}
-      <div className="mt-10">
+      <div id="performers" className="mt-10 scroll-mt-24">
         <FadeInSection>
           <section>
             <div className="flex items-center justify-between mb-3 pl-1">
@@ -178,8 +177,7 @@ export default function HomePage() {
         </FadeInSection>
       </div>
 
-      {/* Collections — mixed grid with first item spanning 2 cols */}
-      <div className="mt-7">
+      <div id="collections" className="mt-7 scroll-mt-24">
         <FadeInSection>
           <section>
             <div className="flex items-center justify-between mb-3">
@@ -246,8 +244,7 @@ export default function HomePage() {
         </FadeInSection>
       </div>
 
-      {/* Browse All — extra top spacing for breathing room */}
-      <div className="mt-10">
+      <div id="browse" className="mt-10 scroll-mt-24">
         <FadeInSection>
           <section>
             <div className="flex items-center gap-3 mb-3 pl-0.5">
