@@ -10,6 +10,21 @@ export default function VideoCard({ video }: { video: Video }) {
   // Derive a subtle tag from the video's first tag
   const primaryTag = video.tags[0] || null;
 
+  // Per-card variation seeds
+  const s1 = video.id.charCodeAt(0) || 65;
+  const s2 = video.id.charCodeAt(1) || 66;
+  const s3 = video.id.charCodeAt(2) || 67;
+  const gradAngle = (s1 * 7) % 360;
+  const lightX1 = (s1 % 60) + 15;
+  const lightY1 = (s2 % 40) + 10;
+  const lightX2 = 100 - lightX1;
+  const lightY2 = 100 - lightY1;
+  const noiseOpacity = 0.03 + (s3 % 5) * 0.01;
+  const shapeX = (s2 % 70) + 15;
+  const shapeY = (s3 % 50) + 25;
+  const shapeSize = 35 + (s1 % 20);
+  const accentOpacity = 4 + (s2 % 5);
+
   return (
     <Link to={`/video/${video.id}`} className="group block">
       <div className="relative rounded-lg overflow-hidden transition-all duration-250 ease-out group-hover:scale-[1.02] group-hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)] group-hover:border-primary/20 border border-transparent">
@@ -18,25 +33,33 @@ export default function VideoCard({ video }: { video: Video }) {
           className="aspect-video relative overflow-hidden"
           style={{
             background: `
-              radial-gradient(ellipse at 30% 20%, ${video.thumbnailColor}44 0%, transparent 50%),
-              radial-gradient(ellipse at 70% 60%, ${video.thumbnailColor}33 0%, transparent 50%),
-              radial-gradient(circle at 80% 20%, hsl(var(--primary) / 0.06) 0%, transparent 40%),
-              radial-gradient(ellipse at 50% 50%, hsl(var(--card)) 0%, hsl(var(--background)) 100%)
+              radial-gradient(ellipse at ${lightX1}% ${lightY1}%, ${video.thumbnailColor}${accentOpacity}8 0%, transparent 50%),
+              radial-gradient(ellipse at ${lightX2}% ${lightY2}%, ${video.thumbnailColor}${accentOpacity - 1}0 0%, transparent 55%),
+              radial-gradient(circle at ${(s3 % 80) + 10}% ${(s1 % 30) + 10}%, hsl(var(--primary) / 0.0${3 + s2 % 5}) 0%, transparent 40%),
+              linear-gradient(${gradAngle}deg, hsl(var(--card)) 0%, hsl(var(--background)) 100%)
             `,
           }}
         >
           {/* Noise texture overlay */}
           <div
-            className="absolute inset-0 opacity-[0.05] mix-blend-overlay"
+            className="absolute inset-0 mix-blend-overlay"
             style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
-              backgroundSize: "128px 128px",
+              opacity: noiseOpacity,
+              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.${7 + s1 % 4}' numOctaves='${3 + s2 % 3}' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
+              backgroundSize: `${100 + (s3 % 60)}px ${100 + (s3 % 60)}px`,
             }}
           />
 
           {/* Abstract shape variation */}
-          <div className="absolute inset-0 opacity-[0.07]" style={{
-            background: `radial-gradient(circle at ${(video.id.charCodeAt(1) % 60) + 20}% ${(video.id.charCodeAt(2) % 40) + 30}%, ${video.thumbnailColor}60 0%, transparent 45%)`,
+          <div className="absolute inset-0" style={{
+            opacity: 0.05 + (s1 % 4) * 0.01,
+            background: `radial-gradient(${s1 % 2 === 0 ? 'circle' : 'ellipse'} at ${shapeX}% ${shapeY}%, ${video.thumbnailColor}55 0%, transparent ${shapeSize}%)`,
+          }} />
+
+          {/* Secondary accent shape */}
+          <div className="absolute inset-0" style={{
+            opacity: 0.03 + (s2 % 3) * 0.01,
+            background: `radial-gradient(circle at ${100 - shapeX}% ${100 - shapeY}%, hsl(var(--primary) / 0.12) 0%, transparent ${25 + s3 % 15}%)`,
           }} />
 
           {/* Vignette */}
