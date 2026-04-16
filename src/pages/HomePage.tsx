@@ -112,7 +112,7 @@ export default function HomePage() {
             <Link
               key={col.id}
               to={`/collection/${col.id}`}
-              className="group rounded overflow-hidden relative"
+              className="group rounded overflow-hidden relative transition-all duration-300 ease-out hover:scale-[1.03] shadow-sm hover:shadow-[0_4px_20px_hsl(var(--primary)/0.12)]"
             >
               <div
                 className="aspect-video relative"
