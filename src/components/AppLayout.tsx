@@ -18,9 +18,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const handleLogout = () => {
-    sessionStorage.removeItem("catalog_auth");
-    window.location.href = "/login";
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/login");
   };
 
   const navItems = [
