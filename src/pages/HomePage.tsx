@@ -1,3 +1,4 @@
+import { useRef, useMemo } from "react";
 import { useCatalog } from "@/context/CatalogContext";
 import { performers, tags, collections, getPerformerById, formatDuration } from "@/data/mockData";
 import CategoryRow from "@/components/CategoryRow";
@@ -32,11 +33,42 @@ export default function HomePage() {
 
   const featured = topRated[0];
 
+  const sections = useMemo(() => [
+    { id: "featured", label: "Featured" },
+    { id: "recent", label: "Recently Added" },
+    { id: "favorites", label: "Favorites" },
+    { id: "top-rated", label: "Top Rated" },
+    { id: "performers", label: "Performers" },
+    { id: "collections", label: "Collections" },
+    { id: "browse", label: "Browse All" },
+  ], []);
+
+  const scrollToSection = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <div className="space-y-0">
-      {/* Varied vertical rhythm via per-section margins */}
+      {/* Discovery Rail — anchors the page below the global header */}
+      <div className="-mx-4 -mt-4 mb-4 sticky top-[theme(spacing.12)] z-30">
+        <div className="bg-background/80 backdrop-blur-md border-b border-border/30">
+          <div className="flex items-center gap-0.5 px-4 py-2 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+            {sections.map((s) => (
+              <button
+                key={s.id}
+                onClick={() => scrollToSection(s.id)}
+                className="shrink-0 px-3 py-1.5 rounded-full text-[11px] font-medium text-muted-foreground/70 hover:text-foreground hover:bg-secondary/60 transition-all duration-200 whitespace-nowrap"
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Hero / Featured */}
       {featured && (
-        <Link to={`/video/${featured.id}`} className="group block -mx-4 -mt-4 mb-8">
+        <Link id="featured" to={`/video/${featured.id}`} className="group block -mx-4 mb-8 scroll-mt-24">
           <div className="relative w-full overflow-hidden" style={{ height: "clamp(340px, 55vh, 560px)" }}>
             {/* Background — intensified gradients for dominance */}
             <div className="absolute inset-0 animate-[heroBgIn_1.2s_ease-out_both] origin-center" style={{
