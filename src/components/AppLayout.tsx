@@ -3,7 +3,7 @@ import { Search, Home, Users, Tag, FolderOpen, Settings, LogOut, Film } from "lu
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { tags } from "@/data/mockData";
+
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
@@ -76,19 +76,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
 
-        {/* Tag filters */}
-        <div className="flex items-center gap-1.5 px-4 pb-2 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
-          <span className="text-[10px] uppercase tracking-wider text-muted-foreground shrink-0 mr-1">Filter:</span>
-          {tags.map((t) => (
-            <Link
-              key={t.id}
-              to={`/tag/${t.id}`}
-              className="shrink-0 px-2.5 py-0.5 rounded-full bg-secondary/80 text-[11px] font-medium text-secondary-foreground hover:bg-primary/15 hover:text-primary transition-colors"
-            >
-              {t.name}
-            </Link>
-          ))}
-        </div>
       </header>
 
       {/* Metadata-only notice */}
