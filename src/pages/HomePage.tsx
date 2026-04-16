@@ -82,9 +82,9 @@ export default function HomePage() {
         </Link>
       )}
 
-      <CategoryRow title="Recently Added" videos={recentlyAdded} />
+      <CategoryRow title="Recently Added" videos={recentlyAdded} variant="featured" />
       <CategoryRow title="Favorites" videos={favorites} />
-      <CategoryRow title="Top Rated" videos={topRated} />
+      <CategoryRow title="Top Rated" videos={topRated} variant="compact" />
 
       {/* Performers Row */}
       <section>
