@@ -3,6 +3,7 @@ import { Search, Home, Users, Tag, FolderOpen, Settings, LogOut, Film } from "lu
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
