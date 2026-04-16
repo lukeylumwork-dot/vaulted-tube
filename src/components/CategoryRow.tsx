@@ -13,22 +13,22 @@ interface Props {
   variant?: RowVariant;
 }
 
-const variantStyles: Record<RowVariant, { cardMin: string; cardMax: string; gap: string; titleClass: string }> = {
+const variantStyles: Record<RowVariant, { gap: string; titleClass: string; heroW: string; smallW: string }> = {
   featured: {
-    cardMin: "min-w-[200px]",
-    cardMax: "max-w-[200px]",
+    heroW: "min-w-[340px] max-w-[340px] sm:min-w-[400px] sm:max-w-[400px]",
+    smallW: "min-w-[170px] max-w-[170px] sm:min-w-[190px] sm:max-w-[190px]",
     gap: "gap-3",
     titleClass: "text-sm font-bold text-foreground tracking-[0.08em] uppercase",
   },
   default: {
-    cardMin: "min-w-[150px]",
-    cardMax: "max-w-[150px]",
+    heroW: "min-w-[280px] max-w-[280px] sm:min-w-[320px] sm:max-w-[320px]",
+    smallW: "min-w-[140px] max-w-[140px] sm:min-w-[155px] sm:max-w-[155px]",
     gap: "gap-2.5",
     titleClass: "text-sm font-semibold text-foreground tracking-[0.06em] uppercase",
   },
   compact: {
-    cardMin: "min-w-[120px]",
-    cardMax: "max-w-[120px]",
+    heroW: "min-w-[240px] max-w-[240px] sm:min-w-[260px] sm:max-w-[260px]",
+    smallW: "min-w-[115px] max-w-[115px] sm:min-w-[125px] sm:max-w-[125px]",
     gap: "gap-2",
     titleClass: "text-xs font-medium text-muted-foreground tracking-[0.1em] uppercase",
   },
@@ -43,6 +43,8 @@ export default function CategoryRow({ title, videos, viewAllLink, variant = "def
   };
 
   if (videos.length === 0) return null;
+
+  const [hero, ...rest] = videos;
 
   return (
     <section>
@@ -66,8 +68,12 @@ export default function CategoryRow({ title, videos, viewAllLink, variant = "def
         </div>
       </div>
       <div ref={scrollRef} className={`flex ${styles.gap} overflow-x-auto pb-1 scrollbar-none`} style={{ scrollbarWidth: "none" }}>
-        {videos.map((v) => (
-          <div key={v.id} className={`${styles.cardMin} ${styles.cardMax}`}>
+        {/* Hero — first item at 2x width */}
+        <div className={`${styles.heroW} flex-shrink-0`}>
+          <VideoCard video={hero} />
+        </div>
+        {rest.map((v) => (
+          <div key={v.id} className={`${styles.smallW} flex-shrink-0`}>
             <VideoCard video={v} />
           </div>
         ))}
