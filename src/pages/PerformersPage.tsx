@@ -223,23 +223,25 @@ export default function PerformersPage() {
       )}
 
       {/* Grid */}
-      {filtered.length > 0 ? (
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-2.5">
-          {filtered.map((p) => (
-            <PerformerCard key={p.id} performer={p} />
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <p className="text-sm text-muted-foreground/60">No performers match your filters</p>
-          <button
-            onClick={clearFilters}
-            className="mt-2 text-xs text-primary hover:underline"
-          >
-            Clear filters
-          </button>
-        </div>
-      )}
+      <FadeInSection delay={80}>
+        {filtered.length > 0 ? (
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-2.5">
+            {filtered.map((p) => (
+              <PerformerCard key={p.id} performer={p} />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <p className="text-sm text-muted-foreground/60">No performers match your filters</p>
+            <button
+              onClick={clearFilters}
+              className="mt-2 text-xs text-primary hover:underline"
+            >
+              Clear filters
+            </button>
+          </div>
+        )}
+      </FadeInSection>
     </div>
   );
 }
