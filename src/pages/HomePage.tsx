@@ -36,39 +36,40 @@ export default function HomePage() {
     <div className="space-y-6">
       {/* Hero / Featured */}
       {featured && (
-        <Link to={`/video/${featured.id}`} className="group block -mx-4 -mt-4 mb-4">
-          <div className="relative w-full overflow-hidden" style={{ height: "clamp(260px, 42vh, 440px)" }}>
-            {/* Background — fades in and slowly scales up */}
+        <Link to={`/video/${featured.id}`} className="group block -mx-4 -mt-4 mb-8">
+          <div className="relative w-full overflow-hidden" style={{ height: "clamp(340px, 55vh, 560px)" }}>
+            {/* Background — intensified gradients for dominance */}
             <div className="absolute inset-0 animate-[heroBgIn_1.2s_ease-out_both] origin-center" style={{
               background: `
-                radial-gradient(ellipse at 20% 25%, ${featured.thumbnailColor}66 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 55%, ${featured.thumbnailColor}40 0%, transparent 45%),
-                radial-gradient(circle at 60% 20%, hsl(var(--primary) / 0.1) 0%, transparent 45%),
-                radial-gradient(ellipse at 40% 90%, ${featured.thumbnailColor}20 0%, transparent 40%),
+                radial-gradient(ellipse at 15% 20%, ${featured.thumbnailColor}88 0%, transparent 50%),
+                radial-gradient(ellipse at 75% 50%, ${featured.thumbnailColor}60 0%, transparent 45%),
+                radial-gradient(circle at 55% 15%, hsl(var(--primary) / 0.15) 0%, transparent 45%),
+                radial-gradient(ellipse at 35% 85%, ${featured.thumbnailColor}35 0%, transparent 40%),
+                radial-gradient(ellipse at 90% 10%, ${featured.thumbnailColor}25 0%, transparent 35%),
                 hsl(var(--background))
               `,
             }} />
             {/* Noise */}
-            <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay" style={{
+            <div className="absolute inset-0 opacity-[0.05] mix-blend-overlay" style={{
               backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
               backgroundSize: "128px 128px",
             }} />
-            {/* Stronger vignette for depth */}
+            {/* Deep vignette */}
             <div className="absolute inset-0" style={{
-              background: "radial-gradient(ellipse at center, transparent 20%, hsl(var(--background) / 0.8) 100%)",
+              background: "radial-gradient(ellipse at center, transparent 15%, hsl(var(--background) / 0.85) 100%)",
             }} />
-            {/* Bottom fade */}
-            <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-background via-background/80 to-transparent" />
-            {/* Top subtle shadow */}
-            <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-background/40 to-transparent" />
-            {/* Content — slides up and fades in with staggered delay */}
-            <div className="absolute inset-0 flex items-end px-8 pb-10 animate-[heroContentIn_0.9s_ease-out_0.3s_both]">
-              <div className="max-w-xl space-y-2.5">
-                <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-primary/80 font-semibold">
+            {/* Extended bottom fade — creates hard separation from content below */}
+            <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-background via-background/90 via-40% to-transparent" />
+            {/* Top shadow */}
+            <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background/50 to-transparent" />
+            {/* Content */}
+            <div className="absolute inset-0 flex items-end px-8 pb-12 animate-[heroContentIn_0.9s_ease-out_0.3s_both]">
+              <div className="max-w-xl space-y-3">
+                <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-primary/90 font-semibold">
                   <Star className="h-3 w-3 fill-star text-star" />
                   Featured
                 </div>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground leading-tight tracking-tight group-hover:text-primary transition-colors duration-300 drop-shadow-sm">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground leading-[1.1] tracking-tight group-hover:text-primary transition-colors duration-300 drop-shadow-md">
                   {featured.title}
                 </h2>
                 <div className="flex items-center gap-3 text-xs text-muted-foreground/80">
@@ -87,8 +88,8 @@ export default function HomePage() {
                   ))}
                 </div>
               </div>
-              <div className="hidden sm:flex ml-auto mb-3 items-center justify-center w-14 h-14 rounded-full border border-foreground/10 bg-foreground/5 backdrop-blur-sm group-hover:bg-primary/10 group-hover:border-primary/30 transition-all duration-300 animate-[heroContentIn_0.9s_ease-out_0.5s_both]">
-                <Play className="h-6 w-6 text-foreground/40 group-hover:text-primary transition-colors duration-300 ml-0.5" />
+              <div className="hidden sm:flex ml-auto mb-4 items-center justify-center w-16 h-16 rounded-full border border-foreground/10 bg-foreground/5 backdrop-blur-sm group-hover:bg-primary/10 group-hover:border-primary/30 transition-all duration-300 animate-[heroContentIn_0.9s_ease-out_0.5s_both]">
+                <Play className="h-7 w-7 text-foreground/40 group-hover:text-primary transition-colors duration-300 ml-0.5" />
               </div>
             </div>
           </div>
