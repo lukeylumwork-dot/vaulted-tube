@@ -92,9 +92,9 @@ export default function HomePage() {
           <h2 className="text-sm font-semibold text-foreground uppercase tracking-wide">Performers</h2>
           <Link to="/performers" className="text-[10px] text-primary hover:underline">View All</Link>
         </div>
-        <div className="flex gap-4 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
+        <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
           {performers.map((p) => (
-            <div key={p.id} className="min-w-[80px]">
+            <div key={p.id} className="min-w-[100px] w-[100px] flex-shrink-0">
               <PerformerCard performer={p} />
             </div>
           ))}
