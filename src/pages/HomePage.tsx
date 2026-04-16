@@ -70,7 +70,7 @@ export default function HomePage() {
                   ))}
                 </div>
               </div>
-              <div className="hidden sm:flex ml-auto mb-3 items-center justify-center w-14 h-14 rounded-full border border-foreground/10 bg-foreground/5 backdrop-blur-sm group-hover:bg-primary/10 group-hover:border-primary/30 transition-all duration-300">
+              <div className="hidden sm:flex ml-auto mb-3 items-center justify-center w-14 h-14 rounded-full border border-foreground/10 bg-foreground/5 backdrop-blur-sm group-hover:bg-primary/10 group-hover:border-primary/30 transition-all duration-300 animate-[heroContentIn_0.9s_ease-out_0.5s_both]">
                 <Play className="h-6 w-6 text-foreground/40 group-hover:text-primary transition-colors duration-300 ml-0.5" />
               </div>
             </div>
