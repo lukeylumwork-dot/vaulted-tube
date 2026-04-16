@@ -3,6 +3,7 @@ import { Search, Home, Users, Tag, FolderOpen, Settings, LogOut, Film } from "lu
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -17,9 +18,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const handleLogout = () => {
-    sessionStorage.removeItem("catalog_auth");
-    window.location.href = "/login";
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/login");
   };
 
   const navItems = [
