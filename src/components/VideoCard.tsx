@@ -9,25 +9,40 @@ export default function VideoCard({ video }: { video: Video }) {
 
   return (
     <Link to={`/video/${video.id}`} className="group block">
-      <div className="relative rounded overflow-hidden bg-card">
-        {/* Thumbnail with gradient overlay */}
+      <div className="relative rounded overflow-hidden">
+        {/* Cinematic thumbnail */}
         <div
-          className="aspect-video relative"
+          className="aspect-video relative overflow-hidden"
           style={{
-            background: `linear-gradient(135deg, ${video.thumbnailColor}, hsl(var(--card)))`,
+            background: `
+              radial-gradient(ellipse at 30% 20%, ${video.thumbnailColor}44 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 60%, ${video.thumbnailColor}33 0%, transparent 50%),
+              radial-gradient(ellipse at 50% 50%, hsl(var(--card)) 0%, hsl(var(--background)) 100%)
+            `,
           }}
         >
-          {/* Bottom gradient for text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+          {/* Noise texture overlay */}
+          <div
+            className="absolute inset-0 opacity-[0.04] mix-blend-overlay"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
+              backgroundSize: "128px 128px",
+            }}
+          />
 
-          {/* Hover overlay */}
-          <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+          {/* Vignette */}
+          <div className="absolute inset-0" style={{
+            background: "radial-gradient(ellipse at center, transparent 40%, hsl(var(--background) / 0.6) 100%)",
+          }} />
 
-          {/* Duration badge */}
-          <div className="absolute bottom-1.5 right-1.5 flex items-center gap-0.5 bg-black/70 rounded px-1 py-0.5 text-[10px] text-foreground font-medium">
-            <Clock className="h-2.5 w-2.5" />
-            {formatDuration(video.duration)}
-          </div>
+          {/* Strong bottom gradient for title area */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+
+          {/* Soft top shadow */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent" />
+
+          {/* Hover glow */}
+          <div className="absolute inset-0 bg-primary/8 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
           {/* Favorite button */}
           <button
@@ -36,7 +51,7 @@ export default function VideoCard({ video }: { video: Video }) {
               e.stopPropagation();
               toggleFavorite(video.id);
             }}
-            className="absolute top-1.5 right-1.5 p-1 rounded-full bg-black/40 hover:bg-black/60 transition-colors opacity-0 group-hover:opacity-100"
+            className="absolute top-1.5 right-1.5 p-1 rounded-full bg-black/50 hover:bg-black/70 transition-all opacity-0 group-hover:opacity-100"
           >
             <Heart
               className={`h-3 w-3 ${
@@ -46,27 +61,34 @@ export default function VideoCard({ video }: { video: Video }) {
             />
           </button>
 
-          {/* Rating stars in bottom left */}
-          <div className="absolute bottom-1.5 left-1.5 flex items-center gap-px">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star
-                key={i}
-                className={`h-2.5 w-2.5 ${
-                  i < video.rating ? "fill-star text-star" : "text-muted-foreground/20"
-                }`}
-              />
-            ))}
+          {/* Bottom content overlay */}
+          <div className="absolute bottom-0 left-0 right-0 p-2 flex items-end justify-between">
+            {/* Duration - prominent */}
+            <div className="flex items-center gap-1 bg-black/60 backdrop-blur-sm rounded px-1.5 py-0.5 text-[11px] text-foreground font-semibold tracking-wide">
+              <Clock className="h-3 w-3 text-foreground/80" />
+              {formatDuration(video.duration)}
+            </div>
+
+            {/* Rating dots */}
+            <div className="flex items-center gap-px">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star
+                  key={i}
+                  className={`h-2 w-2 ${
+                    i < video.rating ? "fill-star text-star" : "text-muted-foreground/20"
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="mt-1.5 px-0.5">
-        <h3 className="text-xs font-semibold text-foreground leading-tight truncate group-hover:text-primary transition-colors">
+      {/* Title-first metadata */}
+      <div className="mt-1 px-0.5">
+        <h3 className="text-[11px] font-bold text-foreground leading-snug truncate group-hover:text-primary transition-colors">
           {video.title}
         </h3>
-        <p className="text-[10px] text-muted-foreground truncate mt-0.5">
-          {video.performers.map((id) => getPerformerById(id)?.name).filter(Boolean).join(", ")}
-        </p>
       </div>
     </Link>
   );
