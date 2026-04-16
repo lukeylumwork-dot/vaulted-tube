@@ -24,10 +24,10 @@ export default function PerformerCard({ performer }: { performer: Performer }) {
           className="aspect-[3/4] relative overflow-hidden"
           style={{
             background: `
-              radial-gradient(ellipse at ${lightX}% ${lightY}%, ${performer.avatarColor}55 0%, transparent 60%),
-              radial-gradient(ellipse at ${100 - lightX}% ${100 - lightY}%, ${performer.avatarColor}25 0%, transparent 50%),
-              radial-gradient(circle at ${(s3 % 70) + 15}% ${(s1 % 50) + 25}%, hsl(var(--primary) / 0.0${3 + s2 % 4}) 0%, transparent 40%),
-              linear-gradient(${gradAngle}deg, hsl(var(--card)) 0%, hsl(var(--background)) 100%)
+              radial-gradient(ellipse at ${lightX}% ${lightY}%, ${performer.avatarColor}88 0%, transparent 55%),
+              radial-gradient(ellipse at ${100 - lightX}% ${100 - lightY}%, ${performer.avatarColor}40 0%, transparent 50%),
+              radial-gradient(circle at ${(s3 % 70) + 15}% ${(s1 % 50) + 25}%, hsl(var(--primary) / 0.${6 + s2 % 4}) 0%, transparent 45%),
+              linear-gradient(${gradAngle}deg, hsl(var(--card)) 0%, hsl(var(--muted)) 50%, hsl(var(--background)) 100%)
             `,
           }}
         >
@@ -43,14 +43,14 @@ export default function PerformerCard({ performer }: { performer: Performer }) {
 
           {/* Abstract shape variation */}
           <div className="absolute inset-0" style={{
-            opacity: 0.06 + (s1 % 3) * 0.01,
-            background: `radial-gradient(${s2 % 2 === 0 ? 'circle' : 'ellipse'} at ${shapeX}% ${shapeY}%, ${performer.avatarColor}50 0%, transparent ${40 + s1 % 15}%)`,
+            opacity: 0.1 + (s1 % 3) * 0.02,
+            background: `radial-gradient(${s2 % 2 === 0 ? 'circle' : 'ellipse'} at ${shapeX}% ${shapeY}%, ${performer.avatarColor}70 0%, transparent ${40 + s1 % 15}%)`,
           }} />
 
           {/* Secondary glow */}
           <div className="absolute inset-0" style={{
-            opacity: 0.03,
-            background: `radial-gradient(circle at ${100 - shapeX}% ${(s1 % 30) + 10}%, hsl(var(--primary) / 0.15) 0%, transparent ${20 + s3 % 15}%)`,
+            opacity: 0.06,
+            background: `radial-gradient(circle at ${100 - shapeX}% ${(s1 % 30) + 10}%, hsl(var(--primary) / 0.25) 0%, transparent ${25 + s3 % 15}%)`,
           }} />
 
           {/* Vignette */}
@@ -64,7 +64,7 @@ export default function PerformerCard({ performer }: { performer: Performer }) {
           </div>
 
           {/* Bottom gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 via-30% to-transparent" />
 
           {/* Hover overlay */}
           <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-250" />
