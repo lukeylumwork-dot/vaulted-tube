@@ -18,19 +18,19 @@ const variantStyles: Record<RowVariant, { cardMin: string; cardMax: string; gap:
     cardMin: "min-w-[200px]",
     cardMax: "max-w-[200px]",
     gap: "gap-3",
-    titleClass: "text-sm font-bold text-foreground tracking-wide",
+    titleClass: "text-sm font-bold text-foreground tracking-[0.08em] uppercase",
   },
   default: {
     cardMin: "min-w-[150px]",
     cardMax: "max-w-[150px]",
-    gap: "gap-2",
-    titleClass: "text-sm font-semibold text-foreground uppercase tracking-wide",
+    gap: "gap-2.5",
+    titleClass: "text-sm font-semibold text-foreground tracking-[0.06em] uppercase",
   },
   compact: {
     cardMin: "min-w-[120px]",
     cardMax: "max-w-[120px]",
-    gap: "gap-1.5",
-    titleClass: "text-xs font-medium text-muted-foreground uppercase tracking-widest",
+    gap: "gap-2",
+    titleClass: "text-xs font-medium text-muted-foreground tracking-[0.1em] uppercase",
   },
 };
 
@@ -46,8 +46,11 @@ export default function CategoryRow({ title, videos, viewAllLink, variant = "def
 
   return (
     <section>
-      <div className="flex items-center justify-between mb-1.5">
-        <h2 className={styles.titleClass}>{title}</h2>
+      <div className="flex items-center justify-between mb-2.5">
+        <div className="flex items-center gap-3">
+          <h2 className={styles.titleClass}>{title}</h2>
+          <div className="h-px flex-1 min-w-[24px] bg-border/40" />
+        </div>
         <div className="flex items-center gap-1">
           {viewAllLink && (
             <a href={viewAllLink} className="text-[10px] text-primary hover:underline mr-1">
