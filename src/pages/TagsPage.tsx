@@ -1,7 +1,24 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, ReactNode } from "react";
 import { tags } from "@/data/mockData";
 import CategoryCard from "@/components/CategoryCard";
 import { Search, X } from "lucide-react";
+import { useScrollFadeIn } from "@/hooks/useScrollFadeIn";
+
+function FadeInSection({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
+  const { ref, isVisible } = useScrollFadeIn(0.1, delay);
+  return (
+    <div
+      ref={ref}
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? "translateY(0)" : "translateY(20px)",
+        transition: "opacity 700ms ease-out, transform 700ms ease-out",
+      }}
+    >
+      {children}
+    </div>
+  );
+}
 
 // Featured: top tags by item count
 const FEATURED_IDS = tags
