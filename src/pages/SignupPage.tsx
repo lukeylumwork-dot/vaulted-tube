@@ -1,25 +1,27 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Film, Lock, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
-export default function LoginPage() {
+export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: window.location.origin,
+      },
     });
 
     setLoading(false);
@@ -27,11 +29,14 @@ export default function LoginPage() {
     if (error) {
       toast({
         variant: "destructive",
-        title: "Login failed",
-        description: "Invalid email or password. Please try again.",
+        title: "Signup failed",
+        description: error.message,
       });
     } else {
-      navigate("/");
+      toast({
+        title: "Check your email",
+        description: "We sent you a confirmation link. Please verify your email to sign in.",
+      });
     }
   };
 
@@ -42,7 +47,7 @@ export default function LoginPage() {
           <Film className="h-12 w-12 text-primary mx-auto" />
           <h1 className="text-2xl font-bold text-foreground">MediaVault</h1>
           <p className="text-sm text-muted-foreground">
-            Private metadata catalog — no hosted media
+            Create your account
           </p>
         </div>
 
@@ -62,27 +67,24 @@ export default function LoginPage() {
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="password"
-              placeholder="Password"
+              placeholder="Password (min 6 characters)"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="pl-10 bg-secondary border-border"
+              minLength={6}
               required
             />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Signing in…" : "Sign In"}
+            {loading ? "Creating account…" : "Sign Up"}
           </Button>
         </form>
 
         <p className="text-sm text-center text-muted-foreground">
-          Don't have an account?{" "}
-          <Link to="/signup" className="text-primary hover:underline">
-            Sign up
+          Already have an account?{" "}
+          <Link to="/login" className="text-primary hover:underline">
+            Sign in
           </Link>
-        </p>
-
-        <p className="text-xs text-center text-muted-foreground">
-          📋 Metadata-only prototype • No explicit content
         </p>
       </div>
     </div>
