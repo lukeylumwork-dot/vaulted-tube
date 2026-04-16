@@ -86,11 +86,11 @@ export default function PerformerCard({ performer }: { performer: Performer }) {
           </button>
 
           {/* Info overlay */}
-          <div className="absolute bottom-0 left-0 right-0 p-3">
-            <h3 className="text-sm font-bold text-foreground truncate group-hover:text-primary transition-colors duration-250 leading-snug">
+          <div className="absolute bottom-0 left-0 right-0 px-3 pb-3 pt-6">
+            <h3 className="text-[13px] font-semibold text-foreground truncate group-hover:text-primary transition-colors duration-250 leading-tight tracking-tight">
               {performer.name}
             </h3>
-            <p className="text-[10px] text-muted-foreground/50 mt-0.5 font-medium">
+            <p className="text-[10px] text-muted-foreground/60 mt-1 font-medium tracking-wide">
               {performer.videoCount} {performer.videoCount === 1 ? "item" : "items"}
             </p>
           </div>
