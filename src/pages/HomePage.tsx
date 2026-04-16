@@ -5,6 +5,23 @@ import PerformerCard from "@/components/PerformerCard";
 import VideoCard from "@/components/VideoCard";
 import { Link } from "react-router-dom";
 import { Clock, Star, Play } from "lucide-react";
+import { useScrollFadeIn } from "@/hooks/useScrollFadeIn";
+
+function FadeInSection({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+  const { ref, isVisible } = useScrollFadeIn(0.1, delay);
+  return (
+    <div
+      ref={ref}
+      className="transition-all duration-700 ease-out"
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? "translateY(0)" : "translateY(20px)",
+      }}
+    >
+      {children}
+    </div>
+  );
+}
 
 export default function HomePage() {
   const { videos } = useCatalog();
@@ -78,10 +95,17 @@ export default function HomePage() {
         </Link>
       )}
 
-      <CategoryRow title="Recently Added" videos={recentlyAdded} variant="featured" />
-      <CategoryRow title="Favorites" videos={favorites} />
-      <CategoryRow title="Top Rated" videos={topRated} variant="compact" />
+      <FadeInSection>
+        <CategoryRow title="Recently Added" videos={recentlyAdded} variant="featured" />
+      </FadeInSection>
+      <FadeInSection delay={80}>
+        <CategoryRow title="Favorites" videos={favorites} />
+      </FadeInSection>
+      <FadeInSection delay={160}>
+        <CategoryRow title="Top Rated" videos={topRated} variant="compact" />
+      </FadeInSection>
 
+      <FadeInSection>
       {/* Performers Row */}
       <section>
         <div className="flex items-center justify-between mb-2.5">
@@ -99,7 +123,9 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+      </FadeInSection>
 
+      <FadeInSection>
       {/* Collections Grid */}
       <section>
         <div className="flex items-center justify-between mb-2.5">
@@ -164,7 +190,9 @@ export default function HomePage() {
           })}
         </div>
       </section>
+      </FadeInSection>
 
+      <FadeInSection>
       {/* All Items Grid */}
       <section>
         <div className="flex items-center gap-3 mb-2.5">
@@ -177,6 +205,7 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+      </FadeInSection>
     </div>
   );
 }
