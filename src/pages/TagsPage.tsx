@@ -1,7 +1,24 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, ReactNode } from "react";
 import { tags } from "@/data/mockData";
 import CategoryCard from "@/components/CategoryCard";
 import { Search, X } from "lucide-react";
+import { useScrollFadeIn } from "@/hooks/useScrollFadeIn";
+
+function FadeInSection({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
+  const { ref, isVisible } = useScrollFadeIn(0.1, delay);
+  return (
+    <div
+      ref={ref}
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? "translateY(0)" : "translateY(20px)",
+        transition: "opacity 700ms ease-out, transform 700ms ease-out",
+      }}
+    >
+      {children}
+    </div>
+  );
+}
 
 // Featured: top tags by item count
 const FEATURED_IDS = tags
@@ -85,46 +102,50 @@ export default function TagsPage() {
 
       {/* Featured row */}
       {showFeatured && (
-        <div className="space-y-2">
-          <span className="text-[10px] text-muted-foreground/50 uppercase tracking-wider font-semibold">
-            Featured
-          </span>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
-            {featured.map((t) => (
-              <CategoryCard key={t.id} tag={t} featured />
-            ))}
+        <FadeInSection>
+          <div className="space-y-2">
+            <span className="text-[10px] text-muted-foreground/50 uppercase tracking-wider font-semibold">
+              Featured
+            </span>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
+              {featured.map((t) => (
+                <CategoryCard key={t.id} tag={t} featured />
+              ))}
+            </div>
           </div>
-        </div>
+        </FadeInSection>
       )}
 
       {/* All categories grid */}
-      <div className="space-y-2">
-        {showFeatured && (
-          <span className="text-[10px] text-muted-foreground/50 uppercase tracking-wider font-semibold">
-            All Categories
-          </span>
-        )}
-        {filtered.length > 0 ? (
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2.5">
-            {filtered.map((t) => (
-              <CategoryCard key={t.id} tag={t} />
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <p className="text-sm text-muted-foreground/60">No categories match your search</p>
-            <button
-              onClick={() => {
-                setQuery("");
-                setActiveCategory(null);
-              }}
-              className="mt-2 text-xs text-primary hover:underline"
-            >
-              Clear filters
-            </button>
-          </div>
-        )}
-      </div>
+      <FadeInSection delay={80}>
+        <div className="space-y-2">
+          {showFeatured && (
+            <span className="text-[10px] text-muted-foreground/50 uppercase tracking-wider font-semibold">
+              All Categories
+            </span>
+          )}
+          {filtered.length > 0 ? (
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2.5">
+              {filtered.map((t) => (
+                <CategoryCard key={t.id} tag={t} />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <p className="text-sm text-muted-foreground/60">No categories match your search</p>
+              <button
+                onClick={() => {
+                  setQuery("");
+                  setActiveCategory(null);
+                }}
+                className="mt-2 text-xs text-primary hover:underline"
+              >
+                Clear filters
+              </button>
+            </div>
+          )}
+        </div>
+      </FadeInSection>
     </div>
   );
 }
