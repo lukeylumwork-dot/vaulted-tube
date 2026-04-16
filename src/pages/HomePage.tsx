@@ -33,8 +33,8 @@ export default function HomePage() {
   const featured = topRated[0];
 
   return (
-    <div className="space-y-6">
-      {/* Hero / Featured */}
+    <div className="space-y-0">
+      {/* Varied vertical rhythm via per-section margins */}
       {featured && (
         <Link to={`/video/${featured.id}`} className="group block -mx-4 -mt-4 mb-8">
           <div className="relative w-full overflow-hidden" style={{ height: "clamp(340px, 55vh, 560px)" }}>
