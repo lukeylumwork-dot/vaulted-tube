@@ -34,12 +34,12 @@ export default function DashboardPage() {
   const startEdit = (v: Video) => {
     setEditingVideo(v);
     setForm({
-      title: v.title + " - EDITED",
+      title: v.title,
       performers: v.performers,
       tags: v.tags,
       duration: String(v.duration / 60),
       rating: String(v.rating),
-      notes: v.notes + " [EDITED]",
+      notes: v.notes,
       collections: v.collections,
     });
     setMode("edit");
