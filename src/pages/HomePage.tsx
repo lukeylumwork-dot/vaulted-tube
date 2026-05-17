@@ -221,12 +221,16 @@ export default function HomePage() {
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
                 <h2 className="text-sm font-semibold text-foreground uppercase tracking-[0.08em]">Collections</h2>
+                <span className="text-[10px] text-muted-foreground/50 font-medium tabular-nums">
+                  {collections.length}
+                </span>
                 <div className="h-px flex-1 min-w-[24px] bg-border/40" />
               </div>
               <Link to="/collections" className="text-[10px] text-primary hover:underline">View All</Link>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2.5">
               {collections.map((col, idx) => {
+                const liveCount = videos.filter((v) => v.collections.includes(col.id)).length;
                 const c1 = col.id.charCodeAt(0) || 65;
                 const c2 = col.id.charCodeAt(1) || 66;
                 const gradAngle = (c1 * 13) % 360;
