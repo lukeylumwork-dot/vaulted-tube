@@ -67,6 +67,18 @@ export default function HomePage() {
     return mapped;
   }, [videos, performerSort]);
 
+  const featured = topRated[0];
+
+  const sections = useMemo(() => [
+    { id: "featured", label: "Featured" },
+    { id: "recent", label: "Recently Added" },
+    { id: "favorites", label: "Favorites" },
+    { id: "top-rated", label: "Top Rated" },
+    { id: "performers", label: "Performers" },
+    { id: "collections", label: "Collections" },
+    { id: "browse", label: "Browse All" },
+  ], []);
+
   const [activeSection, setActiveSection] = useState("featured");
   const railRef = useRef<HTMLDivElement>(null);
 
