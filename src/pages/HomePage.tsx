@@ -230,7 +230,39 @@ export default function HomePage() {
                 </span>
                 <div className="h-px flex-1 min-w-[24px] bg-border/40" />
               </div>
-              <Link to="/performers" className="text-[10px] text-primary hover:underline">View All</Link>
+              <div className="flex items-center gap-2.5">
+                {/* Sort dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => setSortOpen(!sortOpen)}
+                    className="flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-medium text-muted-foreground/70 hover:text-foreground transition-colors"
+                  >
+                    {performerSortLabels[performerSort]}
+                    <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${sortOpen ? "rotate-180" : ""}`} />
+                  </button>
+                  {sortOpen && (
+                    <>
+                      <div className="fixed inset-0 z-10" onClick={() => setSortOpen(false)} />
+                      <div className="absolute right-0 top-full mt-1 z-20 min-w-[130px] rounded-md border border-border/60 bg-popover/95 backdrop-blur-xl shadow-xl py-1">
+                        {(Object.keys(performerSortLabels) as PerformerSort[]).map((key) => (
+                          <button
+                            key={key}
+                            onClick={() => { setPerformerSort(key); setSortOpen(false); }}
+                            className={`w-full text-left px-3 py-1.5 text-[11px] transition-colors ${
+                              performerSort === key
+                                ? "text-primary font-medium bg-primary/5"
+                                : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                            }`}
+                          >
+                            {performerSortLabels[key]}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+                <Link to="/performers" className="text-[10px] text-primary hover:underline">View All</Link>
+              </div>
             </div>
             <div className="flex gap-2.5 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
               {performers.map((p, i) => (
