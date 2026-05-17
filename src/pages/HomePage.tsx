@@ -33,6 +33,15 @@ export default function HomePage() {
     .sort((a, b) => b.rating - a.rating || b.dateAdded.localeCompare(a.dateAdded))
     .slice(0, 12);
 
+  const performers = useMemo(
+    () =>
+      basePerformers.map((p) => ({
+        ...p,
+        videoCount: videos.filter((v) => v.performers.includes(p.id)).length,
+      })),
+    [videos]
+  );
+
   const featured = topRated[0];
 
   const sections = useMemo(() => [
