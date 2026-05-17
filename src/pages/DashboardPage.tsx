@@ -67,7 +67,7 @@ export default function DashboardPage() {
 
     if (mode === "edit") {
       updateVideo(videoData);
-      toast({ title: "Item updated" });
+      toast({ title: "Item updated", description: "Changes were saved successfully." });
     } else {
       addVideo(videoData);
       toast({ title: "Item added" });
@@ -98,6 +98,8 @@ export default function DashboardPage() {
               <VideoCard video={v} />
               <button
                 onClick={(e) => { e.preventDefault(); startEdit(v); }}
+                aria-label={`Edit ${v.title}`}
+                data-testid={`edit-video-${v.id}`}
                 className="absolute top-1.5 left-1.5 p-1 rounded bg-black/50 hover:bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 <Edit2 className="h-2.5 w-2.5 text-foreground" />
@@ -140,14 +142,22 @@ export default function DashboardPage() {
           <label className="text-xs font-medium text-foreground mb-1 block">Performers</label>
           <div className="flex flex-wrap gap-1.5">
             {performers.map((p) => (
-              <Badge
+              <button
                 key={p.id}
-                variant={form.performers.includes(p.id) ? "default" : "outline"}
-                className="cursor-pointer text-[10px] px-2 py-0.5"
+                type="button"
+                aria-label={`Toggle performer ${p.name}`}
+                data-testid={`performer-toggle-${p.id}`}
+                aria-pressed={form.performers.includes(p.id)}
                 onClick={() => toggleArrayItem("performers", p.id)}
+                className="rounded-full"
               >
-                {p.name}
-              </Badge>
+                <Badge
+                  variant={form.performers.includes(p.id) ? "default" : "outline"}
+                  className="cursor-pointer text-[10px] px-2 py-0.5 pointer-events-none"
+                >
+                  {p.name}
+                </Badge>
+              </button>
             ))}
           </div>
         </div>
@@ -156,14 +166,22 @@ export default function DashboardPage() {
           <label className="text-xs font-medium text-foreground mb-1 block">Tags</label>
           <div className="flex flex-wrap gap-1.5">
             {tags.map((t) => (
-              <Badge
+              <button
                 key={t.id}
-                variant={form.tags.includes(t.id) ? "default" : "outline"}
-                className="cursor-pointer text-[10px] px-2 py-0.5"
+                type="button"
+                aria-label={`Toggle tag ${t.name}`}
+                data-testid={`tag-toggle-${t.id}`}
+                aria-pressed={form.tags.includes(t.id)}
                 onClick={() => toggleArrayItem("tags", t.id)}
+                className="rounded-full"
               >
-                {t.name}
-              </Badge>
+                <Badge
+                  variant={form.tags.includes(t.id) ? "default" : "outline"}
+                  className="cursor-pointer text-[10px] px-2 py-0.5 pointer-events-none"
+                >
+                  {t.name}
+                </Badge>
+              </button>
             ))}
           </div>
         </div>
@@ -172,14 +190,22 @@ export default function DashboardPage() {
           <label className="text-xs font-medium text-foreground mb-1 block">Collections</label>
           <div className="flex flex-wrap gap-1.5">
             {collections.map((c) => (
-              <Badge
+              <button
                 key={c.id}
-                variant={form.collections.includes(c.id) ? "default" : "outline"}
-                className="cursor-pointer text-[10px] px-2 py-0.5"
+                type="button"
+                aria-label={`Toggle collection ${c.name}`}
+                data-testid={`collection-toggle-${c.id}`}
+                aria-pressed={form.collections.includes(c.id)}
                 onClick={() => toggleArrayItem("collections", c.id)}
+                className="rounded-full"
               >
-                {c.name}
-              </Badge>
+                <Badge
+                  variant={form.collections.includes(c.id) ? "default" : "outline"}
+                  className="cursor-pointer text-[10px] px-2 py-0.5 pointer-events-none"
+                >
+                  {c.name}
+                </Badge>
+              </button>
             ))}
           </div>
         </div>
