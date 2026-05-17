@@ -5,7 +5,7 @@ import CategoryRow from "@/components/CategoryRow";
 import PerformerCard from "@/components/PerformerCard";
 import VideoCard from "@/components/VideoCard";
 import { Link } from "react-router-dom";
-import { Clock, Star, Play } from "lucide-react";
+import { Clock, Star, Play, ChevronDown } from "lucide-react";
 import { useScrollFadeIn } from "@/hooks/useScrollFadeIn";
 
 function FadeInSection({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
