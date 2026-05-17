@@ -1,5 +1,6 @@
 import { useState, useMemo, ReactNode } from "react";
-import { performers } from "@/data/mockData";
+import { performers as basePerformers } from "@/data/mockData";
+import { useCatalog } from "@/context/CatalogContext";
 import PerformerCard from "@/components/PerformerCard";
 import { Search, ChevronDown, X } from "lucide-react";
 import { useScrollFadeIn } from "@/hooks/useScrollFadeIn";
