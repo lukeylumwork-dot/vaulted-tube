@@ -59,8 +59,11 @@ export default function CategoryRow({ title, videos, viewAllLink, variant = "def
   return (
     <section>
       <div className="flex items-center justify-between mb-2.5">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <h2 className={styles.titleClass}>{title}</h2>
+          <span className="text-[10px] text-muted-foreground/50 font-medium tabular-nums">
+            {videos.length}
+          </span>
           <div className="h-px flex-1 min-w-[24px] bg-border/40" />
         </div>
         <div className="flex items-center gap-1">
