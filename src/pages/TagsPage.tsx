@@ -1,5 +1,6 @@
 import { useState, useMemo, ReactNode } from "react";
-import { tags } from "@/data/mockData";
+import { tags as baseTags } from "@/data/mockData";
+import { useCatalog } from "@/context/CatalogContext";
 import CategoryCard from "@/components/CategoryCard";
 import { Search, X } from "lucide-react";
 import { useScrollFadeIn } from "@/hooks/useScrollFadeIn";
