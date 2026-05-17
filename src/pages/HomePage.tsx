@@ -24,8 +24,19 @@ function FadeInSection({ children, delay = 0 }: { children: React.ReactNode; del
   );
 }
 
+type PerformerSort = "items-desc" | "items-asc" | "a-z" | "z-a";
+
+const performerSortLabels: Record<PerformerSort, string> = {
+  "items-desc": "Most Items",
+  "items-asc": "Fewest Items",
+  "a-z": "A – Z",
+  "z-a": "Z – A",
+};
+
 export default function HomePage() {
   const { videos } = useCatalog();
+  const [performerSort, setPerformerSort] = useState<PerformerSort>("items-desc");
+  const [sortOpen, setSortOpen] = useState(false);
 
   const recentlyAdded = [...videos].sort((a, b) => b.dateAdded.localeCompare(a.dateAdded)).slice(0, 12);
   const favorites = videos.filter((v) => v.isFavorite);
@@ -33,26 +44,28 @@ export default function HomePage() {
     .sort((a, b) => b.rating - a.rating || b.dateAdded.localeCompare(a.dateAdded))
     .slice(0, 12);
 
-  const performers = useMemo(
-    () =>
-      basePerformers.map((p) => ({
-        ...p,
-        videoCount: videos.filter((v) => v.performers.includes(p.id)).length,
-      })),
-    [videos]
-  );
+  const performers = useMemo(() => {
+    const mapped = basePerformers.map((p) => ({
+      ...p,
+      videoCount: videos.filter((v) => v.performers.includes(p.id)).length,
+    }));
 
-  const featured = topRated[0];
-
-  const sections = useMemo(() => [
-    { id: "featured", label: "Featured" },
-    { id: "recent", label: "Recently Added" },
-    { id: "favorites", label: "Favorites" },
-    { id: "top-rated", label: "Top Rated" },
-    { id: "performers", label: "Performers" },
-    { id: "collections", label: "Collections" },
-    { id: "browse", label: "Browse All" },
-  ], []);
+    switch (performerSort) {
+      case "items-desc":
+        mapped.sort((a, b) => b.videoCount - a.videoCount);
+        break;
+      case "items-asc":
+        mapped.sort((a, b) => a.videoCount - b.videoCount);
+        break;
+      case "a-z":
+        mapped.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case "z-a":
+        mapped.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+    }
+    return mapped;
+  }, [videos, performerSort]);
 
   const [activeSection, setActiveSection] = useState("featured");
   const railRef = useRef<HTMLDivElement>(null);
