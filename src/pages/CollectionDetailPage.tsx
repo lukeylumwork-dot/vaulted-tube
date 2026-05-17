@@ -13,7 +13,7 @@ export default function CollectionDetailPage() {
     return <div className="text-center py-20 text-muted-foreground">Collection not found</div>;
   }
 
-  const collectionVideos = videos.filter((v) => collection.videoIds.includes(v.id));
+  const collectionVideos = videos.filter((v) => v.collections.includes(collection.id));
 
   return (
     <div className="animate-fade-in">
