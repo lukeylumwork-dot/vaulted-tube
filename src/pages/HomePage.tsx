@@ -1,6 +1,6 @@
 import { useRef, useMemo, useState, useEffect, useCallback } from "react";
 import { useCatalog } from "@/context/CatalogContext";
-import { performers, tags, collections, getPerformerById, formatDuration } from "@/data/mockData";
+import { performers as basePerformers, tags, collections, getPerformerById, formatDuration } from "@/data/mockData";
 import CategoryRow from "@/components/CategoryRow";
 import PerformerCard from "@/components/PerformerCard";
 import VideoCard from "@/components/VideoCard";
