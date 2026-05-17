@@ -275,7 +275,7 @@ export default function HomePage() {
                       <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-250" />
                       <div className="absolute bottom-2.5 left-2.5 right-2.5">
                         <h3 className={`font-bold text-foreground truncate group-hover:text-primary transition-colors duration-250 ${isWide ? "text-sm" : "text-xs"}`}>{col.name}</h3>
-                        <p className="text-[9px] text-muted-foreground/50 mt-0.5 font-medium">{col.videoIds.length} items</p>
+                        <p className="text-[9px] text-muted-foreground/50 mt-0.5 font-medium">{liveCount} items</p>
                       </div>
                     </div>
                   </Link>
