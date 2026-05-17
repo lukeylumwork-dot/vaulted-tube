@@ -30,9 +30,10 @@ const sortLabels: Record<SortOption, string> = {
   "z-a": "Z – A",
 };
 
-const allPerformerTags = Array.from(new Set(performers.flatMap((p) => p.tags)));
+const allPerformerTags = Array.from(new Set(basePerformers.flatMap((p) => p.tags)));
 
 export default function PerformersPage() {
+  const { videos } = useCatalog();
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortOption>("items-desc");
   const [sortOpen, setSortOpen] = useState(false);
@@ -40,18 +41,32 @@ export default function PerformersPage() {
 
   const hasActiveFilters = selectedTags.length > 0 || query.trim().length > 0;
 
+  // Compute live performer counts from catalog videos
+  const performers = useMemo(
+    () =>
+      basePerformers.map((p) => ({
+        ...p,
+        videoCount: videos.filter((v) => v.performers.includes(p.id)).length,
+      })),
+    [videos]
+  );
+
   const filtered = useMemo(() => {
     let result = [...performers];
 
     if (query.trim()) {
       const q = query.toLowerCase();
       result = result.filter(
-        (p) => p.name.toLowerCase().includes(q) || p.tags.some((t) => t.toLowerCase().includes(q))
+        (p) =>
+          p.name.toLowerCase().includes(q) ||
+          p.tags.some((t) => t.toLowerCase().includes(q))
       );
     }
 
     if (selectedTags.length > 0) {
-      result = result.filter((p) => selectedTags.some((t) => p.tags.includes(t)));
+      result = result.filter((p) =>
+        selectedTags.some((t) => p.tags.includes(t))
+      );
     }
 
     switch (sort) {
@@ -70,7 +85,7 @@ export default function PerformersPage() {
     }
 
     return result;
-  }, [sort, selectedTags, query]);
+  }, [sort, selectedTags, query, performers]);
 
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) =>
