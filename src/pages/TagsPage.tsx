@@ -1,5 +1,6 @@
 import { useState, useMemo, ReactNode } from "react";
-import { tags } from "@/data/mockData";
+import { tags as baseTags } from "@/data/mockData";
+import { useCatalog } from "@/context/CatalogContext";
 import CategoryCard from "@/components/CategoryCard";
 import { Search, X } from "lucide-react";
 import { useScrollFadeIn } from "@/hooks/useScrollFadeIn";
@@ -20,20 +21,32 @@ function FadeInSection({ children, delay = 0 }: { children: ReactNode; delay?: n
   );
 }
 
-// Featured: top tags by item count
-const FEATURED_IDS = tags
-  .slice()
-  .sort((a, b) => b.videoCount - a.videoCount)
-  .slice(0, 4)
-  .map((t) => t.id);
-
-const allCategories = Array.from(new Set(tags.map((t) => t.category)));
+const allCategories = Array.from(new Set(baseTags.map((t) => t.category)));
 
 export default function TagsPage() {
+  const { videos } = useCatalog();
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
-  const featured = useMemo(() => tags.filter((t) => FEATURED_IDS.includes(t.id)), []);
+  // Compute live tag counts from catalog state
+  const tags = useMemo(
+    () =>
+      baseTags.map((t) => ({
+        ...t,
+        videoCount: videos.filter((v) => v.tags.includes(t.id)).length,
+      })),
+    [videos]
+  );
+
+  // Featured: top tags by live item count
+  const featured = useMemo(() => {
+    const topIds = tags
+      .slice()
+      .sort((a, b) => b.videoCount - a.videoCount)
+      .slice(0, 4)
+      .map((t) => t.id);
+    return tags.filter((t) => topIds.includes(t.id));
+  }, [tags]);
 
   const filtered = useMemo(() => {
     let result = tags;
@@ -47,7 +60,7 @@ export default function TagsPage() {
       result = result.filter((t) => t.category === activeCategory);
     }
     return result;
-  }, [query, activeCategory]);
+  }, [tags, query, activeCategory]);
 
   const showFeatured = !query.trim() && !activeCategory;
 
