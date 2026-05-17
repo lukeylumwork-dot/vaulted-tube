@@ -200,6 +200,9 @@ export default function HomePage() {
             <div className="flex items-center justify-between mb-3 pl-1">
               <div className="flex items-center gap-3">
                 <h2 className="text-sm font-semibold text-foreground uppercase tracking-[0.08em]">Performers</h2>
+                <span className="text-[10px] text-muted-foreground/50 font-medium tabular-nums">
+                  {performers.length}
+                </span>
                 <div className="h-px flex-1 min-w-[24px] bg-border/40" />
               </div>
               <Link to="/performers" className="text-[10px] text-primary hover:underline">View All</Link>
