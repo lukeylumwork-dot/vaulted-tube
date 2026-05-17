@@ -29,7 +29,9 @@ export default function HomePage() {
 
   const recentlyAdded = [...videos].sort((a, b) => b.dateAdded.localeCompare(a.dateAdded)).slice(0, 12);
   const favorites = videos.filter((v) => v.isFavorite);
-  const topRated = [...videos].sort((a, b) => b.rating - a.rating).slice(0, 12);
+  const topRated = [...videos]
+    .sort((a, b) => b.rating - a.rating || b.dateAdded.localeCompare(a.dateAdded))
+    .slice(0, 12);
 
   const featured = topRated[0];
 
