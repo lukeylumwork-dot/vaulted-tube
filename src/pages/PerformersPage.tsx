@@ -32,7 +32,7 @@ const sortLabels: Record<SortOption, string> = {
 
 
 export default function PerformersPage() {
-  const { videos, performers } = useCatalog();
+  const { videos, performers, loading, error, reload } = useCatalog();
   const allPerformerTags = Array.from(new Set(performers.flatMap((p) => p.tags)));
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortOption>("items-desc");
@@ -41,14 +41,13 @@ export default function PerformersPage() {
 
   const hasActiveFilters = selectedTags.length > 0 || query.trim().length > 0;
 
-  // Compute live performer counts from catalog videos
   const performersWithCounts = useMemo(
     () =>
       performers.map((p) => ({
         ...p,
         videoCount: videos.filter((v) => v.performers.includes(p.id)).length,
       })),
-    [videos]
+    [videos, performers]
   );
 
   const filtered = useMemo(() => {
@@ -86,6 +85,9 @@ export default function PerformersPage() {
 
     return result;
   }, [sort, selectedTags, query, performersWithCounts]);
+
+  if (loading) return <div className="py-20 text-center text-muted-foreground">Loading catalog…</div>;
+  if (error) return <div className="py-20 text-center"><p className="text-destructive mb-2">Could not load catalog.</p><button className="text-primary text-sm hover:underline" onClick={() => reload()}>Try again</button></div>;
 
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) =>

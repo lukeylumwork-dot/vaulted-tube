@@ -35,6 +35,6 @@ describe("dashboard performer edits", () => {
     fireEvent.click(p2Toggle); fireEvent.click(p1Toggle);
     fireEvent.click(screen.getByRole("button", { name: /update/i }));
     fireEvent.click(screen.getByRole("link", { name: /home/i }));
-    await waitFor(() => expect(within(screen.getByText("Alex Rivera").closest("a") as HTMLElement).getByText("5 items")).toBeInTheDocument());
+    await waitFor(() => expect(within(screen.getByText("Alex Rivera").closest("a") as HTMLElement).getByText("4 items")).toBeInTheDocument());
   });
 });

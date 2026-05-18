@@ -34,7 +34,7 @@ const performerSortLabels: Record<PerformerSort, string> = {
 };
 
 export default function HomePage() {
-  const { videos, performers, tags, collections } = useCatalog();
+  const { videos, performers, tags, collections, loading, error, reload } = useCatalog();
   const [performerSort, setPerformerSort] = useState<PerformerSort>("items-desc");
   const [sortOpen, setSortOpen] = useState(false);
 
@@ -113,6 +113,18 @@ export default function HomePage() {
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  if (loading) {
+    return <div className="py-20 text-center text-muted-foreground">Loading catalog…</div>;
+  }
+
+  if (error) {
+    return <div className="py-20 text-center"><p className="text-destructive mb-2">Could not load catalog.</p><button className="text-primary text-sm hover:underline" onClick={() => reload()}>Try again</button></div>;
+  }
+
+  if (!videos.length) {
+    return <div className="py-20 text-center text-muted-foreground">Your catalog is empty. Add your first video in Manage Catalog.</div>;
+  }
 
   return (
     <div className="space-y-0">

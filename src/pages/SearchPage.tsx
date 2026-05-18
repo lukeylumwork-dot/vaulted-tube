@@ -7,7 +7,7 @@ import { Search } from "lucide-react";
 export default function SearchPage() {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q")?.toLowerCase() || "";
-  const { videos, performers, tags, collections } = useCatalog();
+  const { videos, performers, tags, collections, loading, error, reload } = useCatalog();
 
   const results = useMemo(() => {
     if (!query) return [];
@@ -23,6 +23,9 @@ export default function SearchPage() {
       return titleMatch || performerMatch || tagMatch || notesMatch;
     });
   }, [query, videos]);
+
+  if (loading) return <div className="py-20 text-center text-muted-foreground">Loading catalog…</div>;
+  if (error) return <div className="py-20 text-center"><p className="text-destructive mb-2">Could not load catalog.</p><button className="text-primary text-sm hover:underline" onClick={() => reload()}>Try again</button></div>;
 
   return (
     <div className="animate-fade-in">

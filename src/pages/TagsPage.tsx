@@ -21,29 +21,24 @@ function FadeInSection({ children, delay = 0 }: { children: ReactNode; delay?: n
 }
 
 export default function TagsPage() {
-  const { videos, tags } = useCatalog();
+  const { videos, tags, loading, error, reload } = useCatalog();
   const allCategories = Array.from(new Set(tags.map((t) => t.category)));
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
-  // Compute live tag counts from catalog state
   const tagsWithCounts = useMemo(
     () =>
       tags.map((t) => ({
         ...t,
         videoCount: videos.filter((v) => v.tags.includes(t.id)).length,
       })),
-    [videos]
+    [videos, tags]
   );
 
-  // Featured: top tags by live item count
   const featured = useMemo(() => {
-    const topIds = tags
-      .slice()
+    return [...tagsWithCounts]
       .sort((a, b) => b.videoCount - a.videoCount)
-      .slice(0, 4)
-      .map((t) => t.id);
-    return tagsWithCounts.filter((t) => topIds.includes(t.id));
+      .slice(0, 4);
   }, [tagsWithCounts]);
 
   const filtered = useMemo(() => {
@@ -59,6 +54,9 @@ export default function TagsPage() {
     }
     return result;
   }, [tagsWithCounts, query, activeCategory]);
+
+  if (loading) return <div className="py-20 text-center text-muted-foreground">Loading catalog…</div>;
+  if (error) return <div className="py-20 text-center"><p className="text-destructive mb-2">Could not load catalog.</p><button className="text-primary text-sm hover:underline" onClick={() => reload()}>Try again</button></div>;
 
   const showFeatured = !query.trim() && !activeCategory;
 

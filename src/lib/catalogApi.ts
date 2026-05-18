@@ -9,23 +9,37 @@ export interface CatalogData {
   userPreferences: UserPreferences | null;
 }
 
+interface VideoRow {
+  id: string; title: string; date_added: string; duration_seconds: number;
+  rating: number; notes: string | null; is_favorite: boolean | null;
+  thumbnail_color: string | null; video_url: string | null;
+  video_storage_path: string | null; thumbnail_url: string | null;
+  thumbnail_storage_path: string | null;
+  video_performers: { performer_id: string }[] | null;
+  video_tags: { tag_id: string }[] | null;
+  collection_videos: { collection_id: string }[] | null;
+}
+interface PerformerRow { id: string; name: string; aliases: string[] | null; tags: string[] | null; notes: string | null; avatar_color: string | null; }
+interface TagRow { id: string; name: string; category: string; }
+interface CollectionRow { id: string; name: string; description: string | null; cover_color: string | null; created_at: string; collection_videos: { video_id: string }[] | null; }
+
 export const formatDuration = (seconds: number) => {
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   return h > 0 ? `${h}h ${m}m` : `${m}m`;
 };
 
-const mapVideo = (row: any): Video => ({
+const mapVideo = (row: VideoRow): Video => ({
   id: row.id,
   title: row.title,
-  performers: row.video_performers?.map((vp: any) => vp.performer_id) ?? [],
-  tags: row.video_tags?.map((vt: any) => vt.tag_id) ?? [],
+  performers: row.video_performers?.map((vp) => vp.performer_id) ?? [],
+  tags: row.video_tags?.map((vt) => vt.tag_id) ?? [],
   dateAdded: row.date_added,
   duration: row.duration_seconds,
   rating: row.rating,
   notes: row.notes ?? "",
   isFavorite: row.is_favorite ?? false,
-  collections: row.collection_videos?.map((cv: any) => cv.collection_id) ?? [],
+  collections: row.collection_videos?.map((cv) => cv.collection_id) ?? [],
   thumbnailColor: row.thumbnail_color ?? "hsl(220 40% 22%)",
   videoUrl: row.video_url ?? undefined,
   videoStoragePath: row.video_storage_path ?? undefined,
@@ -44,10 +58,10 @@ export async function fetchCatalogData(): Promise<CatalogData> {
   if (videosRes.error || performersRes.error || tagsRes.error || collectionsRes.error) throw new Error(videosRes.error?.message || performersRes.error?.message || tagsRes.error?.message || collectionsRes.error?.message);
 
   return {
-    videos: (videosRes.data ?? []).map(mapVideo),
-    performers: (performersRes.data ?? []).map((p: any) => ({ ...p, aliases: p.aliases ?? [], tags: p.tags ?? [], videoCount: 0 })),
-    tags: (tagsRes.data ?? []).map((t: any) => ({ ...t, videoCount: 0 })),
-    collections: (collectionsRes.data ?? []).map((c: any) => ({ ...c, videoIds: c.collection_videos?.map((cv: any) => cv.video_id) ?? [], createdAt: c.created_at })),
+    videos: (videosRes.data as VideoRow[] ?? []).map(mapVideo),
+    performers: (performersRes.data as PerformerRow[] ?? []).map((p) => ({ ...p, aliases: p.aliases ?? [], tags: p.tags ?? [], videoCount: 0 })),
+    tags: (tagsRes.data as TagRow[] ?? []).map((t) => ({ ...t, videoCount: 0 })),
+    collections: (collectionsRes.data as CollectionRow[] ?? []).map((c) => ({ ...c, videoIds: c.collection_videos?.map((cv) => cv.video_id) ?? [], createdAt: c.created_at })),
     userPreferences: prefsRes.data ? {
       displayName: prefsRes.data.display_name,
       defaultSort: prefsRes.data.default_sort,
