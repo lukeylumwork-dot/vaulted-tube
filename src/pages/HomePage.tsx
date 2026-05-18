@@ -1,6 +1,6 @@
 import { useRef, useMemo, useState, useEffect, useCallback } from "react";
 import { useCatalog } from "@/context/CatalogContext";
-import { performers as basePerformers, tags, collections, getPerformerById, formatDuration } from "@/data/mockData";
+import { formatDuration } from "@/lib/catalogApi";
 import CategoryRow from "@/components/CategoryRow";
 import PerformerCard from "@/components/PerformerCard";
 import VideoCard from "@/components/VideoCard";
@@ -34,7 +34,7 @@ const performerSortLabels: Record<PerformerSort, string> = {
 };
 
 export default function HomePage() {
-  const { videos } = useCatalog();
+  const { videos, performers, tags, collections } = useCatalog();
   const [performerSort, setPerformerSort] = useState<PerformerSort>("items-desc");
   const [sortOpen, setSortOpen] = useState(false);
 
@@ -44,8 +44,8 @@ export default function HomePage() {
     .sort((a, b) => b.rating - a.rating || b.dateAdded.localeCompare(a.dateAdded))
     .slice(0, 12);
 
-  const performers = useMemo(() => {
-    const mapped = basePerformers.map((p) => ({
+  const sortedPerformers = useMemo(() => {
+    const mapped = performers.map((p) => ({
       ...p,
       videoCount: videos.filter((v) => v.performers.includes(p.id)).length,
     }));
@@ -183,7 +183,7 @@ export default function HomePage() {
                   </span>
                   <span className="w-px h-3 bg-border/50" />
                   <span>
-                    {featured.performers.map((id) => getPerformerById(id)?.name).filter(Boolean).join(", ")}
+                    {featured.performers.map((id) => performers.find((p)=>p.id===id)?.name).filter(Boolean).join(", ")}
                   </span>
                 </div>
                 <div className="flex items-center gap-1 pt-0.5">
@@ -226,7 +226,7 @@ export default function HomePage() {
               <div className="flex items-center gap-3">
                 <h2 className="text-sm font-semibold text-foreground uppercase tracking-[0.08em]">Performers</h2>
                 <span className="text-[10px] text-muted-foreground/50 font-medium tabular-nums">
-                  {performers.length}
+                  {sortedPerformers.length}
                 </span>
                 <div className="h-px flex-1 min-w-[24px] bg-border/40" />
               </div>

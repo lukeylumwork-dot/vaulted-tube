@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useCatalog } from "@/context/CatalogContext";
-import { performers, tags, collections } from "@/data/mockData";
 import { Video } from "@/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -16,7 +15,7 @@ const placeholderColors = [
 ];
 
 export default function DashboardPage() {
-  const { videos, addVideo, updateVideo } = useCatalog();
+  const { videos, performers, tags, collections, addVideo, updateVideo } = useCatalog();
   const { toast } = useToast();
   const [mode, setMode] = useState<"list" | "add" | "edit">("list");
   const [editingVideo, setEditingVideo] = useState<Video | null>(null);

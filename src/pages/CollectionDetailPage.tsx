@@ -1,12 +1,11 @@
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, FolderOpen } from "lucide-react";
-import { collections } from "@/data/mockData";
 import { useCatalog } from "@/context/CatalogContext";
 import VideoCard from "@/components/VideoCard";
 
 export default function CollectionDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { videos } = useCatalog();
+  const { videos, performers, tags, collections } = useCatalog();
   const collection = collections.find((c) => c.id === id);
 
   if (!collection) {
