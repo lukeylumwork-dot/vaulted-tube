@@ -1,13 +1,12 @@
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import { performers, getVideosByPerformer } from "@/data/mockData";
 import { useCatalog } from "@/context/CatalogContext";
 import VideoCard from "@/components/VideoCard";
 import { Badge } from "@/components/ui/badge";
 
 export default function PerformerProfilePage() {
   const { id } = useParams<{ id: string }>();
-  const { videos } = useCatalog();
+  const { videos, performers, tags, collections } = useCatalog();
   const performer = performers.find((p) => p.id === id);
 
   if (!performer) {

@@ -1,5 +1,4 @@
 import { useState, useMemo, ReactNode } from "react";
-import { performers as basePerformers } from "@/data/mockData";
 import { useCatalog } from "@/context/CatalogContext";
 import PerformerCard from "@/components/PerformerCard";
 import { Search, ChevronDown, X } from "lucide-react";
@@ -30,21 +29,25 @@ const sortLabels: Record<SortOption, string> = {
   "z-a": "Z – A",
 };
 
-const allPerformerTags = Array.from(new Set(basePerformers.flatMap((p) => p.tags)));
+
 
 export default function PerformersPage() {
-  const { videos } = useCatalog();
+  const { videos, performers, loading, error, reload } = useCatalog();
+  const allPerformerTags = Array.from(new Set(performers.flatMap((p) => p.tags)));
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortOption>("items-desc");
   const [sortOpen, setSortOpen] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
+  if (loading) return <div className="py-20 text-center text-muted-foreground">Loading catalog…</div>;
+  if (error) return <div className="py-20 text-center"><p className="text-destructive mb-2">Could not load catalog.</p><button className="text-primary text-sm hover:underline" onClick={() => reload()}>Try again</button></div>;
+
   const hasActiveFilters = selectedTags.length > 0 || query.trim().length > 0;
 
   // Compute live performer counts from catalog videos
-  const performers = useMemo(
+  const performersWithCounts = useMemo(
     () =>
-      basePerformers.map((p) => ({
+      performers.map((p) => ({
         ...p,
         videoCount: videos.filter((v) => v.performers.includes(p.id)).length,
       })),
@@ -52,7 +55,7 @@ export default function PerformersPage() {
   );
 
   const filtered = useMemo(() => {
-    let result = [...performers];
+    let result = [...performersWithCounts];
 
     if (query.trim()) {
       const q = query.toLowerCase();
@@ -85,7 +88,7 @@ export default function PerformersPage() {
     }
 
     return result;
-  }, [sort, selectedTags, query, performers]);
+  }, [sort, selectedTags, query, performersWithCounts]);
 
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) =>
@@ -104,7 +107,7 @@ export default function PerformersPage() {
       <div className="space-y-1">
         <h1 className="text-lg font-bold text-foreground tracking-tight">Performers</h1>
         <p className="text-xs text-muted-foreground/50">
-          {filtered.length} of {performers.length} performers
+          {filtered.length} of {performersWithCounts.length} performers
         </p>
       </div>
 

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useCatalog } from "@/context/CatalogContext";
-import { performers, tags, collections } from "@/data/mockData";
 import { Video } from "@/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -16,7 +15,7 @@ const placeholderColors = [
 ];
 
 export default function DashboardPage() {
-  const { videos, addVideo, updateVideo } = useCatalog();
+  const { videos, performers, tags, collections, loading, error, reload, addVideo, updateVideo } = useCatalog();
   const { toast } = useToast();
   const [mode, setMode] = useState<"list" | "add" | "edit">("list");
   const [editingVideo, setEditingVideo] = useState<Video | null>(null);
@@ -83,7 +82,10 @@ export default function DashboardPage() {
   };
 
   if (mode === "list") {
-    return (
+    if (loading) return <div className="py-20 text-center text-muted-foreground">Loading catalog…</div>;
+  if (error) return <div className="py-20 text-center"><p className="text-destructive mb-2">Could not load catalog.</p><button className="text-primary text-sm hover:underline" onClick={() => reload()}>Try again</button></div>;
+
+  return (
       <div className="animate-fade-in">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-sm font-semibold text-foreground uppercase tracking-wide">Manage Catalog</h1>

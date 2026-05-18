@@ -1,6 +1,5 @@
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Tag as TagIcon } from "lucide-react";
-import { tags } from "@/data/mockData";
 import { useCatalog } from "@/context/CatalogContext";
 import VideoCard from "@/components/VideoCard";
 import { useScrollFadeIn } from "@/hooks/useScrollFadeIn";
@@ -24,7 +23,7 @@ function FadeInSection({ children, delay = 0 }: { children: ReactNode; delay?: n
 
 export default function TagDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { videos } = useCatalog();
+  const { videos, performers, tags, collections } = useCatalog();
   const tag = tags.find((t) => t.id === id);
 
   if (!tag) {
