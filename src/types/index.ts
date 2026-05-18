@@ -10,6 +10,10 @@ export interface Video {
   isFavorite: boolean;
   collections: string[]; // collection IDs
   thumbnailColor: string; // placeholder color
+  videoUrl?: string;
+  videoStoragePath?: string;
+  thumbnailUrl?: string;
+  thumbnailStoragePath?: string;
 }
 
 export interface Performer {

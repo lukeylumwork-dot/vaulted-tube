@@ -1,24 +1,23 @@
 import { useSearchParams } from "react-router-dom";
 import { useMemo } from "react";
 import { useCatalog } from "@/context/CatalogContext";
-import { getPerformerById, getTagById } from "@/data/mockData";
 import VideoCard from "@/components/VideoCard";
 import { Search } from "lucide-react";
 
 export default function SearchPage() {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q")?.toLowerCase() || "";
-  const { videos } = useCatalog();
+  const { videos, performers, tags, collections } = useCatalog();
 
   const results = useMemo(() => {
     if (!query) return [];
     return videos.filter((v) => {
       const titleMatch = v.title.toLowerCase().includes(query);
       const performerMatch = v.performers.some((pid) =>
-        getPerformerById(pid)?.name.toLowerCase().includes(query)
+        performers.find((p)=>p.id===pid)?.name.toLowerCase().includes(query)
       );
       const tagMatch = v.tags.some((tid) =>
-        getTagById(tid)?.name.toLowerCase().includes(query)
+        tags.find((t)=>t.id===tid)?.name.toLowerCase().includes(query)
       );
       const notesMatch = v.notes.toLowerCase().includes(query);
       return titleMatch || performerMatch || tagMatch || notesMatch;

@@ -1,10 +1,9 @@
-import { collections } from "@/data/mockData";
 import { useCatalog } from "@/context/CatalogContext";
 import { Link } from "react-router-dom";
 import { FolderOpen } from "lucide-react";
 
 export default function CollectionsPage() {
-  const { videos } = useCatalog();
+  const { videos, performers, tags, collections } = useCatalog();
 
   return (
     <div className="animate-fade-in">

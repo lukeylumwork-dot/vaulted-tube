@@ -1,5 +1,4 @@
 import { useState, useMemo, ReactNode } from "react";
-import { tags as baseTags } from "@/data/mockData";
 import { useCatalog } from "@/context/CatalogContext";
 import CategoryCard from "@/components/CategoryCard";
 import { Search, X } from "lucide-react";
@@ -21,17 +20,16 @@ function FadeInSection({ children, delay = 0 }: { children: ReactNode; delay?: n
   );
 }
 
-const allCategories = Array.from(new Set(baseTags.map((t) => t.category)));
-
 export default function TagsPage() {
-  const { videos } = useCatalog();
+  const { videos, tags } = useCatalog();
+  const allCategories = Array.from(new Set(tags.map((t) => t.category)));
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   // Compute live tag counts from catalog state
-  const tags = useMemo(
+  const tagsWithCounts = useMemo(
     () =>
-      baseTags.map((t) => ({
+      tags.map((t) => ({
         ...t,
         videoCount: videos.filter((v) => v.tags.includes(t.id)).length,
       })),
@@ -45,11 +43,11 @@ export default function TagsPage() {
       .sort((a, b) => b.videoCount - a.videoCount)
       .slice(0, 4)
       .map((t) => t.id);
-    return tags.filter((t) => topIds.includes(t.id));
-  }, [tags]);
+    return tagsWithCounts.filter((t) => topIds.includes(t.id));
+  }, [tagsWithCounts]);
 
   const filtered = useMemo(() => {
-    let result = tags;
+    let result = tagsWithCounts;
     if (query.trim()) {
       const q = query.toLowerCase();
       result = result.filter(
@@ -60,7 +58,7 @@ export default function TagsPage() {
       result = result.filter((t) => t.category === activeCategory);
     }
     return result;
-  }, [tags, query, activeCategory]);
+  }, [tagsWithCounts, query, activeCategory]);
 
   const showFeatured = !query.trim() && !activeCategory;
 
@@ -70,7 +68,7 @@ export default function TagsPage() {
       <div className="space-y-1">
         <h1 className="text-lg font-bold text-foreground tracking-tight">Categories</h1>
         <p className="text-xs text-muted-foreground/60">
-          {filtered.length} of {tags.length} categories
+          {filtered.length} of {tagsWithCounts.length} categories
         </p>
       </div>
 

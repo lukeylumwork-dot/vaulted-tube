@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { Heart, Star, Clock, Calendar, ArrowLeft, Tag } from "lucide-react";
 import { useCatalog } from "@/context/CatalogContext";
-import { getPerformerById, getTagById, formatDuration } from "@/data/mockData";
+import { formatDuration } from "@/lib/catalogApi";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -70,7 +70,7 @@ export default function VideoDetailPage() {
             <h3 className="text-xs font-medium text-muted-foreground uppercase mb-1">Performers</h3>
             <div className="flex flex-wrap gap-2">
               {video.performers.map((pid) => {
-                const p = getPerformerById(pid);
+                const p = performers.find((p) => p.id === pid);
                 return p ? (
                   <Link key={pid} to={`/performer/${pid}`}>
                     <Badge variant="secondary" className="hover:bg-primary/10 hover:text-primary cursor-pointer">{p.name}</Badge>
@@ -85,7 +85,7 @@ export default function VideoDetailPage() {
             <h3 className="text-xs font-medium text-muted-foreground uppercase mb-1">Tags</h3>
             <div className="flex flex-wrap gap-2">
               {video.tags.map((tid) => {
-                const t = getTagById(tid);
+                const t = tags.find((t) => t.id === tid);
                 return t ? (
                   <Link key={tid} to={`/tag/${tid}`}>
                     <Badge variant="outline" className="hover:bg-primary/10 hover:text-primary cursor-pointer">

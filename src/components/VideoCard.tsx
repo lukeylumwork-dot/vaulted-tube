@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Heart, Clock, Star } from "lucide-react";
 import { Video } from "@/types";
-import { formatDuration, getPerformerById } from "@/data/mockData";
+import { formatDuration } from "@/lib/catalogApi";
 import { useCatalog } from "@/context/CatalogContext";
 
 export default function VideoCard({ video }: { video: Video }) {
