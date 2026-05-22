@@ -44,3 +44,10 @@ The frontend reads and writes catalog metadata through `src/lib/catalogApi.ts`.
 ## Storage
 
 No Supabase Storage buckets are currently documented or created in migrations. The data model has optional URL/path fields for video and thumbnail assets, but the app currently presents itself as metadata-only and does not upload media.
+
+## Storage foundation
+
+- **V1 storage decision:** keep external `video_url` links supported, add managed thumbnail uploads, and defer direct large video uploads.
+- Thumbnails are uploaded to Supabase Storage bucket `thumbnails` with user-scoped paths (`<auth.uid>/<video-id>-<timestamp>.<ext>`).
+- Storage policies allow public thumbnail reads, while authenticated users can only insert/update/delete objects under their own user-prefix path.
+- Dashboard now supports either a direct thumbnail URL or uploading an image file for thumbnail metadata persistence.

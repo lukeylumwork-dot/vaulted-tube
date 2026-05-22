@@ -5,9 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit2, Save, X } from "lucide-react";
+import { Plus, Edit2, Save, Upload, X } from "lucide-react";
 import VideoCard from "@/components/VideoCard";
 import { useToast } from "@/hooks/use-toast";
+import { uploadThumbnailForVideo } from "@/lib/thumbnailStorage";
 
 const placeholderColors = [
   "hsl(199 60% 25%)", "hsl(265 50% 25%)", "hsl(142 50% 20%)",
@@ -20,13 +21,15 @@ export default function DashboardPage() {
   const [mode, setMode] = useState<"list" | "add" | "edit">("list");
   const [editingVideo, setEditingVideo] = useState<Video | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
   const [form, setForm] = useState({
     title: "", performers: [] as string[], tags: [] as string[],
     duration: "", rating: "3", notes: "", collections: [] as string[],
+    videoUrl: "", thumbnailUrl: "", thumbnailStoragePath: "",
   });
 
   const resetForm = () => {
-    setForm({ title: "", performers: [], tags: [], duration: "", rating: "3", notes: "", collections: [] });
+    setForm({ title: "", performers: [], tags: [], duration: "", rating: "3", notes: "", collections: [], videoUrl: "", thumbnailUrl: "", thumbnailStoragePath: "" });
     setEditingVideo(null);
     setMode("list");
   };
@@ -41,6 +44,9 @@ export default function DashboardPage() {
       rating: String(v.rating),
       notes: v.notes,
       collections: v.collections,
+      videoUrl: v.videoUrl ?? "",
+      thumbnailUrl: v.thumbnailUrl ?? "",
+      thumbnailStoragePath: v.thumbnailStoragePath ?? "",
     });
     setMode("edit");
   };
@@ -63,6 +69,10 @@ export default function DashboardPage() {
       isFavorite: editingVideo?.isFavorite || false,
       collections: form.collections,
       thumbnailColor: editingVideo?.thumbnailColor || placeholderColors[Math.floor(Math.random() * placeholderColors.length)],
+      videoUrl: form.videoUrl.trim() || undefined,
+      videoStoragePath: undefined,
+      thumbnailUrl: form.thumbnailUrl.trim() || undefined,
+      thumbnailStoragePath: form.thumbnailStoragePath.trim() || undefined,
     };
 
     setIsSaving(true);
@@ -80,6 +90,24 @@ export default function DashboardPage() {
       toast({ title: "Save failed", description, variant: "destructive" });
     } finally {
       setIsSaving(false);
+    }
+  };
+
+
+
+  const handleThumbnailUpload = async (file: File | null) => {
+    if (!file) return;
+    const baseId = editingVideo?.id || `v${Date.now()}`;
+    setIsUploadingThumbnail(true);
+    try {
+      const uploaded = await uploadThumbnailForVideo(baseId, file);
+      setForm((prev) => ({ ...prev, thumbnailUrl: uploaded.publicUrl, thumbnailStoragePath: uploaded.path }));
+      toast({ title: "Thumbnail uploaded" });
+    } catch (error) {
+      const description = error instanceof Error ? error.message : "Unable to upload thumbnail.";
+      toast({ title: "Upload failed", description, variant: "destructive" });
+    } finally {
+      setIsUploadingThumbnail(false);
     }
   };
 
@@ -222,12 +250,27 @@ export default function DashboardPage() {
         </div>
 
         <div>
+          <label className="text-xs font-medium text-foreground mb-1 block">External Video URL</label>
+          <Input value={form.videoUrl} onChange={(e) => setForm((p) => ({ ...p, videoUrl: e.target.value }))} placeholder="https://example.com/video" className="bg-secondary h-8 text-sm" />
+        </div>
+
+        <div>
+          <label className="text-xs font-medium text-foreground mb-1 block">Thumbnail URL</label>
+          <Input value={form.thumbnailUrl} onChange={(e) => setForm((p) => ({ ...p, thumbnailUrl: e.target.value }))} placeholder="https://... or upload below" className="bg-secondary h-8 text-sm" />
+          <div className="mt-2">
+            <label className="text-[10px] text-muted-foreground block mb-1">Upload thumbnail image (jpg/png/webp)</label>
+            <Input type="file" accept="image/png,image/jpeg,image/webp" disabled={isUploadingThumbnail} onChange={(e) => void handleThumbnailUpload(e.target.files?.[0] ?? null)} className="bg-secondary text-xs" />
+          </div>
+          {form.thumbnailStoragePath ? <p className="text-[10px] text-muted-foreground mt-1">Stored path: {form.thumbnailStoragePath}</p> : null}
+        </div>
+
+        <div>
           <label className="text-xs font-medium text-foreground mb-1 block">Notes</label>
           <Textarea value={form.notes} onChange={(e) => setForm((p) => ({ ...p, notes: e.target.value }))} className="bg-secondary text-sm" rows={2} />
         </div>
 
         <Button onClick={() => void handleSave()} disabled={isSaving} className="w-full h-8 text-xs">
-          <Save className="h-3 w-3 mr-1" /> {isSaving ? "Saving..." : mode === "edit" ? "Update" : "Add Item"}
+          <Save className="h-3 w-3 mr-1" /> {isSaving ? "Saving..." : isUploadingThumbnail ? "Uploading thumbnail..." : mode === "edit" ? "Update" : "Add Item"}
         </Button>
       </div>
     </div>
