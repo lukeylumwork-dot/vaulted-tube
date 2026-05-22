@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 
 export default function VideoDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { videos, toggleFavorite } = useCatalog();
+  const { videos, performers, tags, toggleFavorite } = useCatalog();
   const video = videos.find((v) => v.id === id);
 
   if (!video) {
