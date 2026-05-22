@@ -85,7 +85,17 @@ export async function fetchCatalogData(): Promise<CatalogData> {
   };
 }
 
+const requireAuthUserId = async () => {
+  const { data, error } = await supabase.auth.getUser();
+  if (error) throw error;
+  const userId = data.user?.id;
+  if (!userId) throw new Error("You must be logged in to save catalog changes.");
+  return userId;
+};
+
 export async function upsertVideo(video: Video) {
+  const ownerId = await requireAuthUserId();
+
   const { error } = await supabase.from("videos").upsert({
     id: video.id,
     title: video.title,
@@ -99,6 +109,8 @@ export async function upsertVideo(video: Video) {
     video_storage_path: video.videoStoragePath ?? null,
     thumbnail_url: video.thumbnailUrl ?? null,
     thumbnail_storage_path: video.thumbnailStoragePath ?? null,
+    owner_id: ownerId,
+    updated_by: ownerId,
   });
   if (error) throw error;
 
@@ -112,17 +124,17 @@ export async function upsertVideo(video: Video) {
   if (collectionVideosDeleteRes.error) throw collectionVideosDeleteRes.error;
 
   if (video.performers.length) {
-    const videoPerformersInsertRes = await supabase.from("video_performers").insert(video.performers.map((performerId) => ({ video_id: video.id, performer_id: performerId })));
+    const videoPerformersInsertRes = await supabase.from("video_performers").insert(video.performers.map((performerId) => ({ video_id: video.id, performer_id: performerId, owner_id: ownerId })));
     if (videoPerformersInsertRes.error) throw videoPerformersInsertRes.error;
   }
 
   if (video.tags.length) {
-    const videoTagsInsertRes = await supabase.from("video_tags").insert(video.tags.map((tagId) => ({ video_id: video.id, tag_id: tagId })));
+    const videoTagsInsertRes = await supabase.from("video_tags").insert(video.tags.map((tagId) => ({ video_id: video.id, tag_id: tagId, owner_id: ownerId })));
     if (videoTagsInsertRes.error) throw videoTagsInsertRes.error;
   }
 
   if (video.collections.length) {
-    const collectionVideosInsertRes = await supabase.from("collection_videos").insert(video.collections.map((collectionId) => ({ video_id: video.id, collection_id: collectionId })));
+    const collectionVideosInsertRes = await supabase.from("collection_videos").insert(video.collections.map((collectionId) => ({ video_id: video.id, collection_id: collectionId, owner_id: ownerId })));
     if (collectionVideosInsertRes.error) throw collectionVideosInsertRes.error;
   }
 }

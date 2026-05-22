@@ -1,17 +1,55 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Search, Home, Users, Tag, FolderOpen, Settings, Film } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [email, setEmail] = useState("");
+  const [authBusy, setAuthBusy] = useState(false);
+  const { user, signInWithMagicLink, signOut } = useAuth();
+  const { toast } = useToast();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
+
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setAuthBusy(true);
+    try {
+      await signInWithMagicLink(email.trim());
+      toast({ title: "Magic link sent", description: "Check your email to finish signing in." });
+      setEmail("");
+    } catch (error) {
+      const description = error instanceof Error ? error.message : "Unable to send magic link.";
+      toast({ title: "Sign in failed", description, variant: "destructive" });
+    } finally {
+      setAuthBusy(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    setAuthBusy(true);
+    try {
+      await signOut();
+      toast({ title: "Signed out" });
+    } catch (error) {
+      const description = error instanceof Error ? error.message : "Unable to sign out.";
+      toast({ title: "Sign out failed", description, variant: "destructive" });
+    } finally {
+      setAuthBusy(false);
     }
   };
 
@@ -46,6 +84,24 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </form>
 
           <div className="flex items-center gap-1 shrink-0">
+            {user ? (
+              <Button variant="outline" size="sm" className="h-8 text-xs" onClick={() => void handleLogout()} disabled={authBusy}>
+                Logout
+              </Button>
+            ) : (
+              <form onSubmit={handleLogin} className="hidden lg:flex items-center gap-2">
+                <Input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email for magic link"
+                  className="h-8 w-48 text-xs bg-secondary border-border"
+                  type="email"
+                />
+                <Button size="sm" className="h-8 text-xs" disabled={authBusy || !email.trim()} type="submit">
+                  Login
+                </Button>
+              </form>
+            )}
             {navItems.map((item) => {
               const isActive = location.pathname === item.to || (item.to !== "/" && location.pathname.startsWith(item.to));
               return (

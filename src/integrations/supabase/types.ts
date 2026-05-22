@@ -17,6 +17,7 @@ type PublicTables = {
       avatar_color: string;
       created_at: string;
       updated_at: string;
+      owner_id: string | null;
     };
     Insert: {
       id?: string;
@@ -27,6 +28,7 @@ type PublicTables = {
       avatar_color?: string;
       created_at?: string;
       updated_at?: string;
+      owner_id?: string | null;
     };
     Update: Partial<PublicTables["performers"]["Insert"]>;
     Relationships: [];
@@ -38,6 +40,7 @@ type PublicTables = {
       category: string;
       created_at: string;
       updated_at: string;
+      owner_id: string | null;
     };
     Insert: {
       id?: string;
@@ -45,6 +48,7 @@ type PublicTables = {
       category?: string;
       created_at?: string;
       updated_at?: string;
+      owner_id?: string | null;
     };
     Update: Partial<PublicTables["tags"]["Insert"]>;
     Relationships: [];
@@ -57,6 +61,7 @@ type PublicTables = {
       cover_color: string;
       created_at: string;
       updated_at: string;
+      owner_id: string | null;
     };
     Insert: {
       id?: string;
@@ -65,6 +70,7 @@ type PublicTables = {
       cover_color?: string;
       created_at?: string;
       updated_at?: string;
+      owner_id?: string | null;
     };
     Update: Partial<PublicTables["collections"]["Insert"]>;
     Relationships: [];
@@ -85,6 +91,8 @@ type PublicTables = {
       thumbnail_storage_path: string | null;
       created_at: string;
       updated_at: string;
+      owner_id: string | null;
+      updated_by: string | null;
     };
     Insert: {
       id?: string;
@@ -101,6 +109,8 @@ type PublicTables = {
       thumbnail_storage_path?: string | null;
       created_at?: string;
       updated_at?: string;
+      owner_id?: string | null;
+      updated_by?: string | null;
     };
     Update: Partial<PublicTables["videos"]["Insert"]>;
     Relationships: [];
@@ -110,11 +120,13 @@ type PublicTables = {
       video_id: string;
       performer_id: string;
       created_at: string;
+      owner_id: string | null;
     };
     Insert: {
       video_id: string;
       performer_id: string;
       created_at?: string;
+      owner_id?: string | null;
     };
     Update: Partial<PublicTables["video_performers"]["Insert"]>;
     Relationships: [
@@ -139,11 +151,13 @@ type PublicTables = {
       video_id: string;
       tag_id: string;
       created_at: string;
+      owner_id: string | null;
     };
     Insert: {
       video_id: string;
       tag_id: string;
       created_at?: string;
+      owner_id?: string | null;
     };
     Update: Partial<PublicTables["video_tags"]["Insert"]>;
     Relationships: [
@@ -168,11 +182,13 @@ type PublicTables = {
       collection_id: string;
       video_id: string;
       created_at: string;
+      owner_id: string | null;
     };
     Insert: {
       collection_id: string;
       video_id: string;
       created_at?: string;
+      owner_id?: string | null;
     };
     Update: Partial<PublicTables["collection_videos"]["Insert"]>;
     Relationships: [
