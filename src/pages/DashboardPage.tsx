@@ -19,6 +19,7 @@ export default function DashboardPage() {
   const { toast } = useToast();
   const [mode, setMode] = useState<"list" | "add" | "edit">("list");
   const [editingVideo, setEditingVideo] = useState<Video | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const [form, setForm] = useState({
     title: "", performers: [] as string[], tags: [] as string[],
     duration: "", rating: "3", notes: "", collections: [] as string[],
@@ -44,7 +45,7 @@ export default function DashboardPage() {
     setMode("edit");
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.title.trim()) {
       toast({ title: "Title is required", variant: "destructive" });
       return;
@@ -64,14 +65,22 @@ export default function DashboardPage() {
       thumbnailColor: editingVideo?.thumbnailColor || placeholderColors[Math.floor(Math.random() * placeholderColors.length)],
     };
 
-    if (mode === "edit") {
-      updateVideo(videoData);
-      toast({ title: "Item updated", description: "Changes were saved successfully." });
-    } else {
-      addVideo(videoData);
-      toast({ title: "Item added" });
+    setIsSaving(true);
+    try {
+      if (mode === "edit") {
+        await updateVideo(videoData);
+        toast({ title: "Item updated", description: "Changes were saved successfully." });
+      } else {
+        await addVideo(videoData);
+        toast({ title: "Item added" });
+      }
+      resetForm();
+    } catch (saveError) {
+      const description = saveError instanceof Error ? saveError.message : "Unable to save changes.";
+      toast({ title: "Save failed", description, variant: "destructive" });
+    } finally {
+      setIsSaving(false);
     }
-    resetForm();
   };
 
   const toggleArrayItem = (field: "performers" | "tags" | "collections", item: string) => {
@@ -217,8 +226,8 @@ export default function DashboardPage() {
           <Textarea value={form.notes} onChange={(e) => setForm((p) => ({ ...p, notes: e.target.value }))} className="bg-secondary text-sm" rows={2} />
         </div>
 
-        <Button onClick={handleSave} className="w-full h-8 text-xs">
-          <Save className="h-3 w-3 mr-1" /> {mode === "edit" ? "Update" : "Add Item"}
+        <Button onClick={() => void handleSave()} disabled={isSaving} className="w-full h-8 text-xs">
+          <Save className="h-3 w-3 mr-1" /> {isSaving ? "Saving..." : mode === "edit" ? "Update" : "Add Item"}
         </Button>
       </div>
     </div>

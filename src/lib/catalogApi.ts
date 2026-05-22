@@ -102,10 +102,27 @@ export async function upsertVideo(video: Video) {
   });
   if (error) throw error;
 
-  await supabase.from("video_performers").delete().eq("video_id", video.id);
-  await supabase.from("video_tags").delete().eq("video_id", video.id);
-  await supabase.from("collection_videos").delete().eq("video_id", video.id);
-  if (video.performers.length) await supabase.from("video_performers").insert(video.performers.map((performerId) => ({ video_id: video.id, performer_id: performerId })));
-  if (video.tags.length) await supabase.from("video_tags").insert(video.tags.map((tagId) => ({ video_id: video.id, tag_id: tagId })));
-  if (video.collections.length) await supabase.from("collection_videos").insert(video.collections.map((collectionId) => ({ video_id: video.id, collection_id: collectionId })));
+  const videoPerformersDeleteRes = await supabase.from("video_performers").delete().eq("video_id", video.id);
+  if (videoPerformersDeleteRes.error) throw videoPerformersDeleteRes.error;
+
+  const videoTagsDeleteRes = await supabase.from("video_tags").delete().eq("video_id", video.id);
+  if (videoTagsDeleteRes.error) throw videoTagsDeleteRes.error;
+
+  const collectionVideosDeleteRes = await supabase.from("collection_videos").delete().eq("video_id", video.id);
+  if (collectionVideosDeleteRes.error) throw collectionVideosDeleteRes.error;
+
+  if (video.performers.length) {
+    const videoPerformersInsertRes = await supabase.from("video_performers").insert(video.performers.map((performerId) => ({ video_id: video.id, performer_id: performerId })));
+    if (videoPerformersInsertRes.error) throw videoPerformersInsertRes.error;
+  }
+
+  if (video.tags.length) {
+    const videoTagsInsertRes = await supabase.from("video_tags").insert(video.tags.map((tagId) => ({ video_id: video.id, tag_id: tagId })));
+    if (videoTagsInsertRes.error) throw videoTagsInsertRes.error;
+  }
+
+  if (video.collections.length) {
+    const collectionVideosInsertRes = await supabase.from("collection_videos").insert(video.collections.map((collectionId) => ({ video_id: video.id, collection_id: collectionId })));
+    if (collectionVideosInsertRes.error) throw collectionVideosInsertRes.error;
+  }
 }
