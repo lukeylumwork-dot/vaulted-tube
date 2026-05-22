@@ -65,7 +65,7 @@ export default function HomePage() {
         break;
     }
     return mapped;
-  }, [videos, performerSort]);
+  }, [videos, performers, performerSort]);
 
   const featured = topRated[0];
 

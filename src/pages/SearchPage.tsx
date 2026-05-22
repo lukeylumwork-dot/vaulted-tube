@@ -22,7 +22,7 @@ export default function SearchPage() {
       const notesMatch = v.notes.toLowerCase().includes(query);
       return titleMatch || performerMatch || tagMatch || notesMatch;
     });
-  }, [query, videos]);
+  }, [query, videos, performers, tags]);
 
   if (loading) return <div className="py-20 text-center text-muted-foreground">Loading catalog…</div>;
   if (error) return <div className="py-20 text-center"><p className="text-destructive mb-2">Could not load catalog.</p><button className="text-primary text-sm hover:underline" onClick={() => reload()}>Try again</button></div>;

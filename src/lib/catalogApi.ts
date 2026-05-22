@@ -59,9 +59,24 @@ export async function fetchCatalogData(): Promise<CatalogData> {
 
   return {
     videos: (videosRes.data as VideoRow[] ?? []).map(mapVideo),
-    performers: (performersRes.data as PerformerRow[] ?? []).map((p) => ({ ...p, aliases: p.aliases ?? [], tags: p.tags ?? [], videoCount: 0 })),
+    performers: (performersRes.data as PerformerRow[] ?? []).map((p) => ({
+      id: p.id,
+      name: p.name,
+      aliases: p.aliases ?? [],
+      tags: p.tags ?? [],
+      notes: p.notes ?? "",
+      avatarColor: p.avatar_color ?? "hsl(220 40% 22%)",
+      videoCount: 0,
+    })),
     tags: (tagsRes.data as TagRow[] ?? []).map((t) => ({ ...t, videoCount: 0 })),
-    collections: (collectionsRes.data as CollectionRow[] ?? []).map((c) => ({ ...c, videoIds: c.collection_videos?.map((cv) => cv.video_id) ?? [], createdAt: c.created_at })),
+    collections: (collectionsRes.data as CollectionRow[] ?? []).map((c) => ({
+      id: c.id,
+      name: c.name,
+      description: c.description ?? "",
+      coverColor: c.cover_color ?? "hsl(220 40% 22%)",
+      videoIds: c.collection_videos?.map((cv) => cv.video_id) ?? [],
+      createdAt: c.created_at,
+    })),
     userPreferences: prefsRes.data ? {
       displayName: prefsRes.data.display_name,
       defaultSort: prefsRes.data.default_sort,
