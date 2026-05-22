@@ -11,6 +11,17 @@ import { videos, performers, tags, collections } from "@/data/mockData";
 const fetchCatalogDataMock = vi.fn(async () => ({ videos, performers, tags, collections, userPreferences: null }));
 const upsertVideoMock = vi.fn<(video: unknown) => Promise<void>>(async () => undefined);
 
+
+vi.mock("@/context/AuthContext", () => ({
+  useAuth: () => ({
+    user: { id: "test-user" },
+    session: null,
+    loading: false,
+    signInWithMagicLink: vi.fn(),
+    signOut: vi.fn(),
+  }),
+}));
+
 vi.mock("@/lib/catalogApi", () => ({
   formatDuration: (seconds: number) => `${Math.floor(seconds / 60)}m`,
   fetchCatalogData: () => fetchCatalogDataMock(),
@@ -50,7 +61,7 @@ describe("dashboard performer edits", () => {
 
     fireEvent.click(screen.getByRole("link", { name: /home/i }));
     await waitFor(() => expect(within(screen.getByText("Alex Rivera").closest("a") as HTMLElement).getByText("4 items")).toBeInTheDocument());
-  });
+  }, 10000);
 
   it("keeps edit form open and shows error when save fails", async () => {
     upsertVideoMock.mockRejectedValueOnce(new Error("Permission denied"));

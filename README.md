@@ -35,6 +35,12 @@ The current catalog schema is represented in `supabase/migrations/20260518_catal
 
 The frontend reads and writes catalog metadata through `src/lib/catalogApi.ts`.
 
+## Authentication foundation
+
+- Dashboard write/admin actions now require an authenticated Supabase user session.
+- The top navigation includes a minimal email magic-link login form and logout action.
+- Anonymous users can still browse public catalog content while writes are blocked by route protection and database RLS policies.
+
 ## Storage
 
 No Supabase Storage buckets are currently documented or created in migrations. The data model has optional URL/path fields for video and thumbnail assets, but the app currently presents itself as metadata-only and does not upload media.

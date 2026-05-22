@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CatalogProvider } from "@/context/CatalogContext";
+import { AuthProvider } from "@/context/AuthContext";
 import AppLayout from "@/components/AppLayout";
 import HomePage from "@/pages/HomePage";
 import VideoDetailPage from "@/pages/VideoDetailPage";
@@ -15,6 +16,7 @@ import CollectionDetailPage from "@/pages/CollectionDetailPage";
 import SearchPage from "@/pages/SearchPage";
 import DashboardPage from "@/pages/DashboardPage";
 import NotFound from "@/pages/NotFound";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +25,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <BrowserRouter>
+        <AuthProvider>
         <CatalogProvider>
           <AppLayout>
             <Routes>
@@ -35,11 +38,12 @@ const App = () => (
               <Route path="/collections" element={<CollectionsPage />} />
               <Route path="/collection/:id" element={<CollectionDetailPage />} />
               <Route path="/search" element={<SearchPage />} />
-              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AppLayout>
         </CatalogProvider>
+      </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
