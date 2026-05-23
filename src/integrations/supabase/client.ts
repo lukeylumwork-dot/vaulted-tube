@@ -4,14 +4,20 @@ import type { Database } from './types';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL ?? "http://127.0.0.1:54321";
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY ?? "public-anon-key";
+const isTestMode = import.meta.env.MODE === "test";
+const authStorage = isTestMode
+  ? { getItem: () => null, setItem: () => undefined, removeItem: () => undefined }
+  : typeof window !== "undefined"
+    ? window.localStorage
+    : undefined;
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
-    storage: localStorage,
-    persistSession: true,
-    autoRefreshToken: true,
+    storage: authStorage,
+    persistSession: !isTestMode,
+    autoRefreshToken: !isTestMode,
   }
 });
