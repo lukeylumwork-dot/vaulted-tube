@@ -123,10 +123,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      {/* Metadata-only notice */}
+      {/* Catalog notice */}
       <div className="bg-secondary/30 border-b border-border/50">
         <p className="text-center text-[10px] text-muted-foreground py-0.5">
-          📋 Metadata only — no hosted media or explicit content
+          🎬 Personal media vault — hosted &amp; linked videos with metadata. No explicit content.
         </p>
       </div>
 

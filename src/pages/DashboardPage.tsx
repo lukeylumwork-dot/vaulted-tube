@@ -9,6 +9,7 @@ import { Plus, Edit2, Save, Upload, X } from "lucide-react";
 import VideoCard from "@/components/VideoCard";
 import { useToast } from "@/hooks/use-toast";
 import { uploadThumbnailForVideo } from "@/lib/thumbnailStorage";
+import { uploadVideoFileForVideo } from "@/lib/videoStorage";
 
 const placeholderColors = [
   "hsl(199 60% 25%)", "hsl(265 50% 25%)", "hsl(142 50% 20%)",
@@ -22,14 +23,15 @@ export default function DashboardPage() {
   const [editingVideo, setEditingVideo] = useState<Video | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
+  const [isUploadingVideo, setIsUploadingVideo] = useState(false);
   const [form, setForm] = useState({
     title: "", performers: [] as string[], tags: [] as string[],
     duration: "", rating: "3", notes: "", collections: [] as string[],
-    videoUrl: "", thumbnailUrl: "", thumbnailStoragePath: "",
+    videoUrl: "", videoStoragePath: "", thumbnailUrl: "", thumbnailStoragePath: "",
   });
 
   const resetForm = () => {
-    setForm({ title: "", performers: [], tags: [], duration: "", rating: "3", notes: "", collections: [], videoUrl: "", thumbnailUrl: "", thumbnailStoragePath: "" });
+    setForm({ title: "", performers: [], tags: [], duration: "", rating: "3", notes: "", collections: [], videoUrl: "", videoStoragePath: "", thumbnailUrl: "", thumbnailStoragePath: "" });
     setEditingVideo(null);
     setMode("list");
   };
@@ -45,6 +47,7 @@ export default function DashboardPage() {
       notes: v.notes,
       collections: v.collections,
       videoUrl: v.videoUrl ?? "",
+      videoStoragePath: v.videoStoragePath ?? "",
       thumbnailUrl: v.thumbnailUrl ?? "",
       thumbnailStoragePath: v.thumbnailStoragePath ?? "",
     });
@@ -58,7 +61,7 @@ export default function DashboardPage() {
     }
 
     const videoData: Video = {
-      id: editingVideo?.id || `v${Date.now()}`,
+      id: editingVideo?.id || crypto.randomUUID(),
       title: form.title,
       performers: form.performers,
       tags: form.tags,
@@ -70,7 +73,7 @@ export default function DashboardPage() {
       collections: form.collections,
       thumbnailColor: editingVideo?.thumbnailColor || placeholderColors[Math.floor(Math.random() * placeholderColors.length)],
       videoUrl: form.videoUrl.trim() || undefined,
-      videoStoragePath: undefined,
+      videoStoragePath: form.videoStoragePath.trim() || undefined,
       thumbnailUrl: form.thumbnailUrl.trim() || undefined,
       thumbnailStoragePath: form.thumbnailStoragePath.trim() || undefined,
     };
@@ -95,9 +98,25 @@ export default function DashboardPage() {
 
 
 
+  const handleVideoFileUpload = async (file: File | null) => {
+    if (!file) return;
+    const baseId = editingVideo?.id || crypto.randomUUID();
+    setIsUploadingVideo(true);
+    try {
+      const uploaded = await uploadVideoFileForVideo(baseId, file);
+      setForm((prev) => ({ ...prev, videoStoragePath: uploaded.path, videoUrl: "" }));
+      toast({ title: "Video uploaded", description: "The hosted file will be used for playback." });
+    } catch (error) {
+      const description = error instanceof Error ? error.message : "Unable to upload video.";
+      toast({ title: "Upload failed", description, variant: "destructive" });
+    } finally {
+      setIsUploadingVideo(false);
+    }
+  };
+
   const handleThumbnailUpload = async (file: File | null) => {
     if (!file) return;
-    const baseId = editingVideo?.id || `v${Date.now()}`;
+    const baseId = editingVideo?.id || crypto.randomUUID();
     setIsUploadingThumbnail(true);
     try {
       const uploaded = await uploadThumbnailForVideo(baseId, file);
@@ -250,8 +269,13 @@ export default function DashboardPage() {
         </div>
 
         <div>
-          <label className="text-xs font-medium text-foreground mb-1 block">External Video URL</label>
-          <Input value={form.videoUrl} onChange={(e) => setForm((p) => ({ ...p, videoUrl: e.target.value }))} placeholder="https://example.com/video" className="bg-secondary h-8 text-sm" />
+          <label className="text-xs font-medium text-foreground mb-1 block">Video</label>
+          <Input value={form.videoUrl} onChange={(e) => setForm((p) => ({ ...p, videoUrl: e.target.value }))} placeholder="External URL (https://example.com/video.mp4) — or upload below" className="bg-secondary h-8 text-sm" />
+          <div className="mt-2">
+            <label className="text-[10px] text-muted-foreground block mb-1">Upload video file (mp4/webm/ogg/mov, up to 50MB)</label>
+            <Input type="file" accept="video/mp4,video/webm,video/ogg,video/quicktime" disabled={isUploadingVideo} onChange={(e) => void handleVideoFileUpload(e.target.files?.[0] ?? null)} className="bg-secondary text-xs" />
+          </div>
+          {form.videoStoragePath ? <p className="text-[10px] text-muted-foreground mt-1">Hosted file: {form.videoStoragePath}{form.videoUrl.trim() ? " (external URL takes precedence)" : ""}</p> : null}
         </div>
 
         <div>
@@ -269,8 +293,8 @@ export default function DashboardPage() {
           <Textarea value={form.notes} onChange={(e) => setForm((p) => ({ ...p, notes: e.target.value }))} className="bg-secondary text-sm" rows={2} />
         </div>
 
-        <Button onClick={() => void handleSave()} disabled={isSaving} className="w-full h-8 text-xs">
-          <Save className="h-3 w-3 mr-1" /> {isSaving ? "Saving..." : isUploadingThumbnail ? "Uploading thumbnail..." : mode === "edit" ? "Update" : "Add Item"}
+        <Button onClick={() => void handleSave()} disabled={isSaving || isUploadingVideo || isUploadingThumbnail} className="w-full h-8 text-xs">
+          <Save className="h-3 w-3 mr-1" /> {isSaving ? "Saving..." : isUploadingVideo ? "Uploading video..." : isUploadingThumbnail ? "Uploading thumbnail..." : mode === "edit" ? "Update" : "Add Item"}
         </Button>
       </div>
     </div>

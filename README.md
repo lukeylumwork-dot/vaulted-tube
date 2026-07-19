@@ -1,6 +1,6 @@
 # Vaulted Tube
 
-Private catalog interface for video references and metadata.
+Private video library: hosted/linked video playback plus reference metadata (performers, tags, collections).
 
 ## Local Development
 
@@ -25,13 +25,13 @@ Private catalog interface for video references and metadata.
 ## Required Environment Variables
 
 - `VITE_SUPABASE_URL`: Supabase project URL.
-- `VITE_SUPABASE_ANON_KEY`: Supabase anon key for browser access.
+- `VITE_SUPABASE_ANON_KEY` (or `VITE_SUPABASE_PUBLISHABLE_KEY`): Supabase anon/publishable key for browser access. `VITE_SUPABASE_ANON_KEY` wins when both are set; the publishable-key name is accepted because Lovable-managed builds inject it.
 
 Do not use a Supabase service role key in the browser.
 
 ## Supabase
 
-The current catalog schema is represented in `supabase/migrations/20260518_catalog_schema.sql`.
+The catalog schema lives in `supabase/migrations/` (apply in filename order). `supabase/seed.sql` seeds a starter catalog: three playable, openly licensed videos (Blender Foundation open movies via Google's public sample bucket) plus performers, tags, and collections. It is idempotent — safe to re-run.
 
 The frontend reads and writes catalog metadata through `src/lib/catalogApi.ts`.
 
@@ -43,11 +43,14 @@ The frontend reads and writes catalog metadata through `src/lib/catalogApi.ts`.
 
 ## Storage
 
-No Supabase Storage buckets are currently documented or created in migrations. The data model has optional URL/path fields for video and thumbnail assets, but the app currently presents itself as metadata-only and does not upload media.
+Two public-read Supabase Storage buckets are created by migrations, both with user-scoped write policies (`<auth.uid>/<video-id>-<timestamp>.<ext>` paths; authenticated users can only write under their own prefix):
 
-## Storage foundation
+- `thumbnails` (`20260522_thumbnails_storage_foundation.sql`): images up to 5MB (jpeg/png/webp).
+- `videos` (`20260719_videos_storage_foundation.sql`): video files up to 50MB (mp4/webm/ogg/quicktime).
 
-- **V1 storage decision:** keep external `video_url` links supported, add managed thumbnail uploads, and defer direct large video uploads.
-- Thumbnails are uploaded to Supabase Storage bucket `thumbnails` with user-scoped paths (`<auth.uid>/<video-id>-<timestamp>.<ext>`).
-- Storage policies allow public thumbnail reads, while authenticated users can only insert/update/delete objects under their own user-prefix path.
-- Dashboard now supports either a direct thumbnail URL or uploading an image file for thumbnail metadata persistence.
+## Playback and hosting
+
+- A video plays on its detail page when it has either an external `video_url` or a hosted `video_storage_path`. The external URL takes precedence when both are set.
+- The Manage dashboard supports both options per item: paste an external URL, or upload a video file (stored in the `videos` bucket via `src/lib/videoStorage.ts`).
+- Thumbnails work the same way (URL or uploaded file); cards and the detail page show the real image when present and fall back to generated gradient art.
+- Seeded starter videos use external CC-BY sample URLs, so playback works before anything is uploaded.
