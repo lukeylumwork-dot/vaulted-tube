@@ -3,12 +3,16 @@ import { Heart, Clock, Star } from "lucide-react";
 import { Video } from "@/types";
 import { formatDuration } from "@/lib/catalogApi";
 import { useCatalog } from "@/context/CatalogContext";
+import { getThumbnailPublicUrl } from "@/lib/thumbnailStorage";
 
 export default function VideoCard({ video }: { video: Video }) {
   const { toggleFavorite } = useCatalog();
 
   // Derive a subtle tag from the video's first tag
   const primaryTag = video.tags[0] || null;
+
+  const thumbnailSrc = video.thumbnailUrl
+    ?? (video.thumbnailStoragePath ? getThumbnailPublicUrl(video.thumbnailStoragePath) : undefined);
 
   // Per-card variation seeds
   const s1 = video.id.charCodeAt(0) || 65;
@@ -40,6 +44,16 @@ export default function VideoCard({ video }: { video: Video }) {
             `,
           }}
         >
+          {/* Real thumbnail (gradient art stays as fallback/backdrop) */}
+          {thumbnailSrc && (
+            <img
+              src={thumbnailSrc}
+              alt=""
+              loading="lazy"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          )}
+
           {/* Noise texture overlay */}
           <div
             className="absolute inset-0 mix-blend-overlay"

@@ -3,7 +3,11 @@ import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL ?? "http://127.0.0.1:54321";
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY ?? "public-anon-key";
+// Lovable-managed builds inject VITE_SUPABASE_PUBLISHABLE_KEY; local .env may use either name.
+const SUPABASE_ANON_KEY =
+  import.meta.env.VITE_SUPABASE_ANON_KEY ??
+  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ??
+  "public-anon-key";
 const isTestMode = import.meta.env.MODE === "test";
 const authStorage = isTestMode
   ? { getItem: () => null, setItem: () => undefined, removeItem: () => undefined }

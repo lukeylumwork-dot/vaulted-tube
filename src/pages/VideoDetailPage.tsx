@@ -2,6 +2,8 @@ import { useParams, Link } from "react-router-dom";
 import { Heart, Star, Clock, Calendar, ArrowLeft, Tag } from "lucide-react";
 import { useCatalog } from "@/context/CatalogContext";
 import { formatDuration } from "@/lib/catalogApi";
+import { resolveVideoSource } from "@/lib/videoStorage";
+import { getThumbnailPublicUrl } from "@/lib/thumbnailStorage";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -19,24 +21,52 @@ export default function VideoDetailPage() {
     );
   }
 
+  const videoSrc = resolveVideoSource(video);
+  const posterUrl = video.thumbnailUrl
+    ?? (video.thumbnailStoragePath ? getThumbnailPublicUrl(video.thumbnailStoragePath) : undefined);
+
   return (
     <div className="max-w-4xl mx-auto animate-fade-in">
       <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6">
         <ArrowLeft className="h-4 w-4" /> Back
       </Link>
 
-      <div className="grid grid-cols-1 md:grid-cols-[320px_1fr] gap-8">
-        {/* Thumbnail */}
-        <div>
-          <div
-            className="aspect-video rounded-lg flex items-center justify-center"
-            style={{ backgroundColor: video.thumbnailColor }}
+      {/* Player */}
+      {videoSrc && (
+        <div className="mb-8 rounded-lg overflow-hidden bg-black shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+          <video
+            key={video.id}
+            controls
+            preload="metadata"
+            playsInline
+            poster={posterUrl}
+            src={videoSrc}
+            className="w-full aspect-video"
+            data-testid="video-player"
           >
-            <span className="text-foreground/20 text-sm uppercase tracking-wider">
-              Metadata Only
-            </span>
-          </div>
+            Your browser does not support HTML5 video playback.
+          </video>
         </div>
+      )}
+
+      <div className={videoSrc ? "space-y-4" : "grid grid-cols-1 md:grid-cols-[320px_1fr] gap-8"}>
+        {/* Thumbnail placeholder when nothing is playable */}
+        {!videoSrc && (
+          <div>
+            <div
+              className="aspect-video rounded-lg flex items-center justify-center overflow-hidden"
+              style={{ backgroundColor: video.thumbnailColor }}
+            >
+              {posterUrl ? (
+                <img src={posterUrl} alt={video.title} className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-foreground/20 text-sm uppercase tracking-wider">
+                  No media linked
+                </span>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Details */}
         <div className="space-y-4">
